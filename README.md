@@ -29,8 +29,6 @@ In this GUI we are going to embed the SOM workflow inside GUI to make it easier 
    * Cluster Map 
    * UMatrix Map
 
-### Milestones 
-
 ##### MVP
 
 This MVP should include the following functions:
@@ -39,3 +37,12 @@ This MVP should include the following functions:
 2. choose hyperparameters, following the table above
 
 This MVP is built on the assumption that the csv feed is nxm matrix with valid numerical values for properties users want to train. So the entire dataset is the design matrix that does not need further processing.
+
+
+### Milestone
+
+##### Milestone 1 (1/23/2020):
+
+In the one_page_all.py I have designed a one-page frame for people to input hyperparameters of SOM model and click to train. I consider the output of visualizations and export them to png files. The click events need to be embedded. The tool I used is a tkinter GUI designer called PAGE, one can be found on sourceforge: http://page.sourceforge.net/. 
+
+In order to run that you need to download ActiveTcl, one can be found here: https://www.activestate.com/products/tcl/ 

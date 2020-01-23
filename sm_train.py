@@ -20,6 +20,8 @@ except ImportError:
     py3 = True
 
 import sm_train_support
+import tfprop_sompy
+# from tfprop_sompy import tfprop_analysis, tfprop_som, tfprop_vis, tfprop_config, cluster_inspector
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
@@ -270,6 +272,7 @@ class Toplevel1:
         self.TButton1 = ttk.Button(self.Canvas1)
         self.TButton1.place(relx=0.385, rely=0.916, height=35, width=120)
         self.TButton1.configure(takefocus="")
+        self.TButton1.configure(command=self.quit)
         self.TButton1.configure(text='''Start Training''')
 
 if __name__ == '__main__':
