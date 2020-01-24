@@ -1,3 +1,28 @@
+# import sompy / tfprop_sompy related packages
+import math
+import glob
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import urllib
+import random
+import matplotlib as mpl
+from sompy.sompy import SOMFactory
+from sompy.visualization.plot_tools import plot_hex_map
+import logging
+import pickle
+import os
+
+import sklearn
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn import cluster
+from sklearn.externals import joblib
+
+import warnings
+warnings.filterwarnings('ignore')
+
+logging.getLogger('matplotlib.font_manager').disabled = True
+
 def read_data(file):
     """
     input: csv file chosen from the directory
