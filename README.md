@@ -17,7 +17,7 @@ In this GUI we are going to embed the SOM workflow inside GUI to make it easier 
     | normalization | verbose = "info"         |
     | initialization| train_rough_len          |
     | component_name| train_rough_radiusin     |
-    |               | train_rough_radiusfin    |
+    | lattice       | train_rough_radiusfin    |
     |               | train_finetune_len       |
     |               | train_finetune_radiusin  |
     |               | train_finetune_radiusfin |
@@ -46,3 +46,9 @@ This MVP is built on the assumption that the csv feed is nxm matrix with valid n
 In the one_page_all.py I have designed a one-page frame for people to input hyperparameters of SOM model and click to train. I consider the output of visualizations and export them to png files. The click events need to be embedded. The tool I used is a tkinter GUI designer called PAGE, one can be found on sourceforge: http://page.sourceforge.net/. 
 
 In order to run that you need to download ActiveTcl, one can be found here: https://www.activestate.com/products/tcl/ 
+
+In this repository, the user can create a working environment first, then install tkinter. One then can run command to start the GUI:
+`
+python one_page_all.py
+`
+
