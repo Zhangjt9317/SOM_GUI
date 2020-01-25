@@ -42,8 +42,17 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from sklearn import cluster
 from sklearn.externals import joblib
 
-import tfprop_sompy 
-from tfprop_sompy import tfprop_som, tfprop_vis, tfprop_analysis
+# import tfprop_sompy 
+# from tfprop_sompy import tfprop_som, tfprop_vis
+
+## cluster inspector 
+# import importlib
+# import logging 
+# from tfprop_sompy import tfprop_config
+# from tfprop_sompy import tfprop_vis
+# from tfprop_sompy import tfprop_config as tfpinit
+# from tfprop_sompy import cluster_inspector as ci
+# importlib.reload(ci)
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -76,110 +85,11 @@ def destroy_Toplevel1():
     w.destroy()
     w = None
 
-# read data
-def read_data(file):
-    """
-    input: csv file chosen from the directory
-    """
-    try:
-        f = open(str(file))
-        return pd.DataFrame(file)
-    except IOError:
-        print("File not accessible")
-    finally:
-        return pd.DataFrame(file)
-
-# training som
-def sm_training(data, mapsize, normalization, initialization, 
-                component_names, lattice, n_job, verbose, 
-                train_rough_len, train_finetune_len, file_name):
-    """
-    Train the model with different parameters.
-    """
-    dir_name = "Models/ "
-    sm = SOMFactory().build(data, mapsize,normalization,initialization,component_names,lattice)
-    sm.train(n_job,verbose,train_rough_len,train_finetune_len)
-    topographic_error = sm.calculate_topographic_error()
-    quantitization_error = np.mean(sm._bmu[1])
-
-    # if multiple runs are required 
-    #joblib.dump(sm, "model_{}.joblib".format(i))
-    pickle.dump(sm, open(os.path.join(dir_name, file_name), "wb"))
-
-# select model from the chosen file
-def select_model(file):
-    """
-    The file should be the trained sm model in the directory
-    This operation 
-    """
-    dir_name = "Models/ "
-
-    sm = pickle.load(open(os.path.join(dir_name, file_name),"rb"))
-    return sm
-
-def vis(title, dir_name, file_name):
-    """
-    generate cluster map visualization
-    """
-    labels = labels = list(data.index)
-    n_clusters = 5
-
-    cmap = plt.get_cmap("tab20")
-    n_palette = 20  # number of different colors in this color palette
-    color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
-    msz = sm.codebook.mapsize
-    proj = sm.project_data(sm.data_raw)
-    coord = sm.bmu_ind_to_xy(proj)
-
-    fig, ax = plt.subplots(1, 1, figsize=(40,40))
-
-    #cl_labels = som.cluster(n_clusters)
-    cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, random_state = 555).fit_predict(sm.codebook.matrix)
-
-    # fill each rectangular unit area with cluster color
-    # and draw line segment to the border of cluster
-    norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
-
-    # borders
-    ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
-        cmap=cmap, norm=norm, edgecolors='face',
-        lw=0.5, alpha=0.5)
-
-    ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
-    ax.axis('off')
-
-    for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
-        x += 0.2
-        y += 0.2
-        # "+ 0.1" means shift of label location to upperright direction
-
-    # randomize the location of the label not to be overwrapped with each other
-    # x_text += 0.1 * np.random.randn()
-    y += 0.3 * np.random.randn()
-
-    # wrap of label for chemical compound
-    # label = str_wrap(label)
-
-    #     ax.text(x+0.3, y+0.3, label,
-    #             horizontalalignment='left', verticalalignment='bottom',
-    #             rotation=30, fontsize=15, weight='semibold')
-        
-    plt.title(title)
-
-    # save as png file
-    plt.savefig(os.path.join(dir_name, file_name)+".png")
-
 # combobox setting 
 init = ["pca","random"]
 norm = ["var"]
 lattice = ["hexa","rect"]
 names = ["hello","hi","nihao"]
-
-def read_comp_names(data):
-    """
-    Input: nxm data matrix
-    """
-    return [names for name in data.columns]
 
 class Toplevel1:
     def __init__(self, top=None):
@@ -625,7 +535,7 @@ class Toplevel1:
         self.Canvas1.configure(selectbackground="#c4c4c4")
         self.Canvas1.configure(selectforeground="black")
 
-        self.Training = ttk.Button(self.Frame1, command=self.print_result)
+        self.Training = ttk.Button(self.Frame1)
         self.Training.place(relx=0.313, rely=0.811, height=35, width=130)
         self.Training.configure(takefocus="")
         self.Training.configure(text='''Train''')
@@ -679,10 +589,10 @@ class Toplevel1:
         self.Comp_Name_ent.configure(background="#000000")
         self.Comp_Name_ent.configure(takefocus="")
 
-        self.TButton1 = ttk.Button(self.Frame1)
-        self.TButton1.place(relx=0.214, rely=0.274, height=35, width=120)
-        self.TButton1.configure(takefocus="")
-        self.TButton1.configure(text='''Find File''')
+        self.Find_File = ttk.Button(self.Frame1)
+        self.Find_File.place(relx=0.214, rely=0.274, height=35, width=120)
+        self.Find_File.configure(takefocus="")
+        self.Find_File.configure(text='''Find File''')
 
         self.Message1 = tk.Message(self.Frame1)
         self.Message1.place(relx=0.036, rely=0.639, relheight=0.109
@@ -696,23 +606,178 @@ class Toplevel1:
         self.Message1.configure(text='''This is a SOM Tool that trains the input design matrix and output a model and visualizations.''')
         self.Message1.configure(width=478)
 
-        self.Label2 = tk.Label(self.Frame1)
-        self.Label2.place(relx=0.042, rely=0.568, height=31, width=147)
-        self.Label2.configure(anchor='w')
-        self.Label2.configure(background="#d9d9d9")
-        self.Label2.configure(disabledforeground="#a3a3a3")
-        self.Label2.configure(foreground="#000000")
-        self.Label2.configure(text='''Lattice''')
+        self.Lattice = tk.Label(self.Frame1)
+        self.Lattice.place(relx=0.042, rely=0.568, height=31, width=147)
+        self.Lattice.configure(anchor='w')
+        self.Lattice.configure(background="#d9d9d9")
+        self.Lattice.configure(disabledforeground="#a3a3a3")
+        self.Lattice.configure(foreground="#000000")
+        self.Lattice.configure(text='''Lattice''')
 
-        self.TCombobox1 = ttk.Combobox(self.Frame1, values=lattice)
-        self.TCombobox1.place(relx=0.135, rely=0.568, relheight=0.031
+        self.Lattice_ent = ttk.Combobox(self.Frame1, values=lattice)
+        self.Lattice_ent.place(relx=0.135, rely=0.568, relheight=0.031
                 , relwidth=0.121)
-        self.TCombobox1.configure(textvariable=one_page_all_support.combobox)
-        self.TCombobox1.configure(takefocus="")
+        self.Lattice_ent.configure(textvariable=one_page_all_support.combobox)
+        self.Lattice_ent.configure(takefocus="")
     
     # def print_result(self):
     #     print(self.n_job_ent.get())
 
+    # read data
+    def read_data(self):
+        """
+        input: csv file chosen from the directory
+        """
+        data_file = self.Data_entry.get()
+        try:
+            f = open(str(data_file))
+            # return pd.DataFrame(data_file)
+        except IOError:
+            print("File not accessible")
+        finally:
+            return pd.DataFrame(data_file)
+
+    def read_comp_names(self):
+        """
+        Input: nxm data matrix
+        """
+        data = read_data()
+        return [names for name in data.columns]
+
+    # training som, export model and print errors
+    def sm_training(self, data, mapsize, normalization, initialization, 
+                    component_names, lattice, n_job, verbose, 
+                    train_rough_len, train_finetune_len, file_name):
+        """
+        Train the model with different parameters.
+        """
+        dir_name = "Models/ "
+        data = read_data()
+
+        # basic parameters for initialization
+        mapsize = (self.Mapsize_x.get(),self.Mapsize_y.get())
+        normalization = self.Normalization_ent.get()
+        initialization = self.Initialization_ent.get()
+        component_names = self.Comp_Name_ent.get()
+        lattice = self.Lattice_ent.get()
+
+        # parameters for training and tuning
+        n_job = self.n_job_ent.get()
+        shared_memory = self.shared_memory_ent.get()
+        verbose = self.verbose_ent.get()
+        train_rough_len = self.train_ft_len_ent.get()
+        train_rough_radiusin = self.train_rough_rin_ent.get()
+        train_rough_radiusfin = self.train_rough_rfin_ent.get()
+        train_finetune_len = self.train_ft_len_ent.get()
+        train_finetune_radiusin = self.train_ft_rin_ent.get()
+        train_finetune_radiusfin = self.train_ft_rfin_ent.get()
+        train_len_factor = self.train_len_factor_ent.get()
+        maxtrainlen = self.maxtrainlen_ent.get()
+
+        # initialize the build
+        sm = SOMFactory().build(data, mapsize,normalization,initialization,component_names,lattice)
+        # start training
+        sm.train(n_job,shared_memory,verbose,train_rough_len,train_rough_radiusin,train_rough_radiusfin,train_finetune_len,
+        train_finetune_radiusin,train_finetune_radiusfin,train_len_factor,maxtrainlen)
+
+        # errors calculation
+        topographic_error = sm.calculate_topographic_error()
+        quantitization_error = np.mean(sm._bmu[1])
+
+        # if multiple runs are required 
+        #joblib.dump(sm, "model_{}.joblib".format(i))
+
+        # dump the model
+        pickle.dump(sm, open(os.path.join(dir_name, file_name), "wb"))
+
+        # print errors on the cmd prompt
+        print("the topographic error is %s " % topographic_error)
+        print("the quantitization error is %s " % quantitization_error)
+
+    # select model from the chosen file
+    def select_model(self):
+        """
+        The file should be the trained sm model in the directory
+        This operation 
+        """
+        dir_name = "Models/ "
+        model_file = self.Select_Model.get()
+        sm = pickle.load(open(os.path.join(dir_name, model_file),"rb"))
+        return sm
+
+    # generate vis and export to dir_name + filename
+    def vis(self, title, dir_name, file_name):
+        """
+        generate cluster map visualization
+        """
+        labels = labels = list(data.index)
+        n_clusters = 5
+
+        cmap = plt.get_cmap("tab20")
+        n_palette = 20  # number of different colors in this color palette
+        color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
+        msz = sm.codebook.mapsize
+        proj = sm.project_data(sm.data_raw)
+        coord = sm.bmu_ind_to_xy(proj)
+
+        fig, ax = plt.subplots(1, 1, figsize=(40,40))
+
+        #cl_labels = som.cluster(n_clusters)
+        cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, random_state = 555).fit_predict(sm.codebook.matrix)
+
+        # fill each rectangular unit area with cluster color
+        # and draw line segment to the border of cluster
+        norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
+
+        # borders
+        ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
+            cmap=cmap, norm=norm, edgecolors='face',
+            lw=0.5, alpha=0.5)
+
+        ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
+        ax.axis('off')
+
+        for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
+            x += 0.2
+            y += 0.2
+            # "+ 0.1" means shift of label location to upperright direction
+
+        # randomize the location of the label not to be overwrapped with each other
+        # x_text += 0.1 * np.random.randn()
+        y += 0.3 * np.random.randn()
+
+        # wrap of label for chemical compound
+        # label = str_wrap(label)
+
+        #     ax.text(x+0.3, y+0.3, label,
+        #             horizontalalignment='left', verticalalignment='bottom',
+        #             rotation=30, fontsize=15, weight='semibold')
+            
+        plt.title(title)
+
+        # save as png file
+        plt.savefig(os.path.join(dir_name, file_name)+".png")
+
+    # cluster inspector
+    def cluster_inspector(self, sm, data):
+        """
+        Input: sm is the som model
+        data is the input data matrix
+        """
+        # This makes all the loggers stay quiet unless it's important
+        logging.getLogger().setLevel(logging.WARNING)
+
+        cl_labels = ci.kmeans_clust(sm, 5)
+        clusters_list = ci.sort_materials_by_cluster(sm,data,cl_labels)
+
+        # # This makes it so it will display the full lists
+        pd.set_option('display.max_rows', 2000)
+        pd.set_option('display.width', 1000)
+        pd.set_option("display.max_columns",50)
+
+        # # This should be the last statement of the cell, to make it display
+        # # That, or assign the return value to a variable, and have that variable be the final expression in a cell
+        ci.cluster_tabs(sm, data, clusters_list, cl_labels)
 
 if __name__ == '__main__':
     vp_start_gui()
