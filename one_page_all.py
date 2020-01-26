@@ -42,17 +42,14 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from sklearn import cluster
 from sklearn.externals import joblib
 
-# import tfprop_sompy 
-# from tfprop_sompy import tfprop_som, tfprop_vis
-
-## cluster inspector 
-# import importlib
-# import logging 
-# from tfprop_sompy import tfprop_config
-# from tfprop_sompy import tfprop_vis
-# from tfprop_sompy import tfprop_config as tfpinit
-# from tfprop_sompy import cluster_inspector as ci
-# importlib.reload(ci)
+# cluster inspector 
+import importlib
+import logging 
+from tfprop_sompy import tfprop_config
+from tfprop_sompy import tfprop_vis
+from tfprop_sompy import tfprop_config as tfpinit
+from tfprop_sompy import cluster_inspector as ci
+importlib.reload(ci)
 
 import warnings
 warnings.filterwarnings('ignore')
