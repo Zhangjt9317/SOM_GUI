@@ -536,7 +536,9 @@ class Toplevel1:
         self.Training.place(relx=0.313, rely=0.811, height=35, width=130)
         self.Training.configure(takefocus="")
         self.Training.configure(text='''Train''')
-
+        self.Training.configure(command=self.sm_training)
+        
+        # the progress bar that indicates the progress of training
         self.TProgressbar1 = ttk.Progressbar(self.Frame1)
         self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234
                 , relheight=0.0, height=22)
@@ -545,6 +547,7 @@ class Toplevel1:
         self.Next_vis_btn1.place(relx=0.76, rely=0.882, height=35, width=120)
         self.Next_vis_btn1.configure(takefocus="")
         self.Next_vis_btn1.configure(text='''Next''')
+        self.Next_vis_btn1.configure(command=self.vis)
 
         self.Export_vis = ttk.Button(self.Frame1)
         self.Export_vis.place(relx=0.854, rely=0.882, height=35, width=120)
@@ -571,6 +574,7 @@ class Toplevel1:
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
+        self.vis_gen.configure(command=self.vis)
         self.vis_gen.configure(text='''Gen Vis''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
@@ -621,6 +625,7 @@ class Toplevel1:
     #     print(self.n_job_ent.get())
 
     # read data
+    # callback1 --> select data 
     def read_data(self):
         """
         input: csv file chosen from the directory
@@ -632,13 +637,13 @@ class Toplevel1:
         except IOError:
             print("File not accessible")
         finally:
-            return pd.DataFrame(data_file)
+            return pd.read_csv(data_file)
 
     def read_comp_names(self):
         """
         Input: nxm data matrix
         """
-        data = read_data()
+        data = self.read_data()
         return [names for name in data.columns]
 
     # training som, export model and print errors
@@ -649,7 +654,7 @@ class Toplevel1:
         Train the model with different parameters.
         """
         dir_name = "Models/ "
-        data = read_data()
+        data = self.read_data()
 
         # basic parameters for initialization
         mapsize = (self.Mapsize_x.get(),self.Mapsize_y.get())
@@ -692,6 +697,7 @@ class Toplevel1:
         print("the quantitization error is %s " % quantitization_error)
 
     # select model from the chosen file
+    # callback 2 --> select trained model
     def select_model(self):
         """
         The file should be the trained sm model in the directory
@@ -703,10 +709,19 @@ class Toplevel1:
         return sm
 
     # generate vis and export to dir_name + filename
-    def vis(self, title, dir_name, file_name):
+    def vis(self):
         """
         generate cluster map visualization
         """
+
+        # the followings are default, we can customize later
+        title = "Cluster"
+        dir_name = "Images/"
+        file_name = "cluster.png"
+
+        data = self.read_data()
+        sm = self.select_model().get()
+
         labels = labels = list(data.index)
         n_clusters = 5
 
@@ -755,12 +770,16 @@ class Toplevel1:
         # save as png file
         plt.savefig(os.path.join(dir_name, file_name)+".png")
 
+
     # cluster inspector
-    def cluster_inspector(self, sm, data):
+    def cluster_inspector(self, sm):
         """
         Input: sm is the som model
         data is the input data matrix
         """
+        data = self.read_data()
+        sm = self.select_model()
+
         # This makes all the loggers stay quiet unless it's important
         logging.getLogger().setLevel(logging.WARNING)
 
