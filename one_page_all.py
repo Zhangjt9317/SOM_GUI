@@ -776,24 +776,7 @@ class Toplevel1:
             comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
                         which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
 
-    # def umat(self):
-    #     self.n_clusters=int(self.Cluster_ent.get())
-    #     umatrixTFP = tfprop_vis.UMatrixTFP(0, 0, '', text_size=14)
-    #     cmap = plt.get_cmap('RdYlBu_r')  # set color map
-    #     umat = umatrixTFP.show(self.sm, pd.DataFrame(self.labels),pd.DataFrame(self.labels), "Images/umat_hexa.png",show_data=True, labels=False, contooor=True,cmap=cmap,blob = False)
-    
-    # def heatmap(self):
-    #     self.n_clusters=int(self.Cluster_ent.get())
-    #     htmap_x, htmap_y = (10, 10)
-    #     viewTFP = tfprop_vis.ViewTFP(htmap_x, htmap_y, '',text_size=10)
-
-    #     cmap = plt.get_cmap('RdYlBu_r')  # set color map
-    #     self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
-
-    #     for i in range(0,11):
-    #         comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
-    #                     which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
-    
+   
     # def clusteringmap_category(self):
     #     # sm,labels,n_clusters,dataset,colorcategory,savepath
         
