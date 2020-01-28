@@ -52,3 +52,8 @@ In this repository, the user can create a working environment first, then instal
 python one_page_all.py
 `
 
+##### 1/27/2020
+
+For some reason jupyter does not start successfully based on the current environment.yml, but the rest of them function normally. I would ignore this issue right now and focus getting the MVP done soon. The following are issues that need to be addressed immediately. 
+
+1. 

@@ -1,18 +1,28 @@
-# read data
-import pandas as pd
+# importing tkinter and tkinter.ttk 
+# and all their functions and classes 
+from tkinter import *
+from tkinter.ttk import *
+import pickle 
 
-def read_data(data_file):
-    """
-    input: csv file chosen from the directory
-    """
-    # data_file = self.Data_entry.get()
-    try:
-        f = open(str(data_file))
-    except IOError:
-        print("File not accessible")
-    finally:
-        return pd.read_csv(data_file)
+# importing askopenfile function 
+# from class filedialog 
+from tkinter.filedialog import askopenfile
+from tkinter.filedialog import askopenfilename
 
-if __name__ == "__main__":
-    d = read_data("virtdata.csv")
-    print(d)
+root = Tk()
+root.geometry('200x100')
+
+# This function will be used to open
+# file in read mode and only Python files
+# will be opened
+def open_file(): 
+    file = askopenfilename(initialdir = "/",title = "Select file",filetypes =[("All files", "*.*")]) 
+    if file is not None:
+        # print(content)
+        content = open(file, "rb")
+        return pickle.load(content)
+
+btn = Button(root, text ='Open', command = lambda:open_file()) 
+btn.pack(side = TOP, pady = 10) 
+
+mainloop() 

@@ -6,6 +6,7 @@
 #    Jan 23, 2020 07:51:02 PM PST  platform: Windows NT
 # Author: Jingtian Zhang
 
+import warnings
 import sys
 
 try:
@@ -21,6 +22,9 @@ except ImportError:
     py3 = True
 
 import one_page_all_support
+from tkinter import filedialog as tkFileDialog
+from tkinter.filedialog import askopenfile
+from tkinter.filedialog import askopenfilename
 
 # import sompy / tfprop_sompy related packages
 import math
@@ -40,18 +44,18 @@ import os
 import sklearn
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from sklearn import cluster
-from sklearn.externals import joblib
+# from sklearn.externals import joblib
+import joblib
 
-# cluster inspector 
+# cluster inspector
 import importlib
-import logging 
+import logging
 from tfprop_sompy import tfprop_config
 from tfprop_sompy import tfprop_vis
 from tfprop_sompy import tfprop_config as tfpinit
 from tfprop_sompy import cluster_inspector as ci
 importlib.reload(ci)
 
-import warnings
 warnings.filterwarnings('ignore')
 
 logging.getLogger('matplotlib.font_manager').disabled = True
@@ -62,31 +66,37 @@ def vp_start_gui():
     global val, w, root
     root = tk.Tk()
     one_page_all_support.set_Tk_var()
-    top = Toplevel1 (root)
+    top = Toplevel1(root)
     one_page_all_support.init(root, top)
     root.mainloop()
 
+
 w = None
+
+
 def create_Toplevel1(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
     global w, w_win, rt
     rt = root
-    w = tk.Toplevel (root)
+    w = tk.Toplevel(root)
     one_page_all_support.set_Tk_var()
-    top = Toplevel1 (w)
+    top = Toplevel1(w)
     one_page_all_support.init(w, top, *args, **kwargs)
     return (w, top)
+
 
 def destroy_Toplevel1():
     global w
     w.destroy()
     w = None
 
-# combobox setting 
-init = ["pca","random"]
+
+# combobox setting
+init = ["pca", "random"]
 norm = ["var"]
-lattice = ["hexa","rect"]
-names = ["hello","hi","nihao"]
+lattice = ["hexa", "rect"]
+names = ["hello", "hi", "nihao"]
+
 
 class Toplevel1:
     def __init__(self, top=None):
@@ -94,17 +104,17 @@ class Toplevel1:
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85'
-        _ana2color = '#ececec' # Closest X11 color: 'gray92'
+        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        _ana1color = '#d9d9d9'  # X11 color: 'gray85'
+        _ana2color = '#ececec'  # Closest X11 color: 'gray92'
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')
-        self.style.configure('.',background=_bgcolor)
-        self.style.configure('.',foreground=_fgcolor)
-        self.style.configure('.',font="TkDefaultFont")
-        self.style.map('.',background=
-            [('selected', _compcolor), ('active',_ana2color)])
+        self.style.configure('.', background=_bgcolor)
+        self.style.configure('.', foreground=_fgcolor)
+        self.style.configure('.', font="TkDefaultFont")
+        self.style.map('.', background=[
+                       ('selected', _compcolor), ('active', _ana2color)])
 
         top.geometry("1920x986+-9+-11")
         top.minsize(176, 1)
@@ -136,17 +146,17 @@ class Toplevel1:
         self.Title.configure(highlightcolor="black")
         self.Title.configure(text='''SOM Trainer''')
 
-        self.Data_entry = tk.Entry(self.Frame1)
-        self.Data_entry.place(relx=0.109, rely=0.274,height=26, relwidth=0.096)
-        self.Data_entry.configure(background="white")
-        self.Data_entry.configure(disabledforeground="#a3a3a3")
-        self.Data_entry.configure(font="TkFixedFont")
-        self.Data_entry.configure(foreground="#000000")
-        self.Data_entry.configure(highlightbackground="#d9d9d9")
-        self.Data_entry.configure(highlightcolor="black")
-        self.Data_entry.configure(insertbackground="black")
-        self.Data_entry.configure(selectbackground="#c4c4c4")
-        self.Data_entry.configure(selectforeground="black")
+        # self.Data_entry = tk.Entry(self.Frame1)
+        # self.Data_entry.place(relx=0.109, rely=0.274,height=26, relwidth=0.096)
+        # self.Data_entry.configure(background="white")
+        # self.Data_entry.configure(disabledforeground="#a3a3a3")
+        # self.Data_entry.configure(font="TkFixedFont")
+        # self.Data_entry.configure(foreground="#000000")
+        # self.Data_entry.configure(highlightbackground="#d9d9d9")
+        # self.Data_entry.configure(highlightcolor="black")
+        # self.Data_entry.configure(insertbackground="black")
+        # self.Data_entry.configure(selectbackground="#c4c4c4")
+        # self.Data_entry.configure(selectforeground="black")
 
         self.Data = tk.Label(self.Frame1)
         self.Data.place(relx=0.042, rely=0.274, height=31, width=43)
@@ -196,20 +206,20 @@ class Toplevel1:
         self.Initialization.configure(highlightcolor="black")
         self.Initialization.configure(text='''Initialization''')
 
-        self.Comp_Name = tk.Label(self.Frame1)
-        self.Comp_Name.place(relx=0.042, rely=0.507, height=31, width=161)
-        self.Comp_Name.configure(activebackground="#f9f9f9")
-        self.Comp_Name.configure(activeforeground="black")
-        self.Comp_Name.configure(anchor='w')
-        self.Comp_Name.configure(background="#d9d9d9")
-        self.Comp_Name.configure(disabledforeground="#a3a3a3")
-        self.Comp_Name.configure(foreground="#000000")
-        self.Comp_Name.configure(highlightbackground="#d9d9d9")
-        self.Comp_Name.configure(highlightcolor="black")
-        self.Comp_Name.configure(text='''Component Names''')
+        # self.Comp_Name = tk.Label(self.Frame1)
+        # self.Comp_Name.place(relx=0.042, rely=0.507, height=31, width=161)
+        # self.Comp_Name.configure(activebackground="#f9f9f9")
+        # self.Comp_Name.configure(activeforeground="black")
+        # self.Comp_Name.configure(anchor='w')
+        # self.Comp_Name.configure(background="#d9d9d9")
+        # self.Comp_Name.configure(disabledforeground="#a3a3a3")
+        # self.Comp_Name.configure(foreground="#000000")
+        # self.Comp_Name.configure(highlightbackground="#d9d9d9")
+        # self.Comp_Name.configure(highlightcolor="black")
+        # self.Comp_Name.configure(text='''Component Names''')
 
         self.Mapsize_x = tk.Entry(self.Frame1)
-        self.Mapsize_x.place(relx=0.109, rely=0.325,height=26, relwidth=0.054)
+        self.Mapsize_x.place(relx=0.109, rely=0.325, height=26, relwidth=0.054)
         self.Mapsize_x.configure(background="white")
         self.Mapsize_x.configure(disabledforeground="#a3a3a3")
         self.Mapsize_x.configure(font="TkFixedFont")
@@ -257,7 +267,8 @@ class Toplevel1:
         self.shared_memory.configure(text='''shared_memory''')
 
         self.train_rough_len = tk.Label(self.Frame1)
-        self.train_rough_len.place(relx=0.313, rely=0.385, height=31, width=126)
+        self.train_rough_len.place(
+            relx=0.313, rely=0.385, height=31, width=126)
         self.train_rough_len.configure(activebackground="#f9f9f9")
         self.train_rough_len.configure(activeforeground="black")
         self.train_rough_len.configure(anchor='w')
@@ -269,7 +280,8 @@ class Toplevel1:
         self.train_rough_len.configure(text='''train_rough_len''')
 
         self.train_rough_rin = tk.Label(self.Frame1)
-        self.train_rough_rin.place(relx=0.313, rely=0.436, height=31, width=165)
+        self.train_rough_rin.place(
+            relx=0.313, rely=0.436, height=31, width=165)
         self.train_rough_rin.configure(activebackground="#f9f9f9")
         self.train_rough_rin.configure(activeforeground="black")
         self.train_rough_rin.configure(anchor='w')
@@ -329,7 +341,8 @@ class Toplevel1:
         self.train_ft_rfin.configure(text='''train_finetune_radiusfin''')
 
         self.train_len_factor = tk.Label(self.Frame1)
-        self.train_len_factor.place(relx=0.313, rely=0.69, height=31, width=124)
+        self.train_len_factor.place(
+            relx=0.313, rely=0.69, height=31, width=124)
         self.train_len_factor.configure(activebackground="#f9f9f9")
         self.train_len_factor.configure(activeforeground="black")
         self.train_len_factor.configure(anchor='w')
@@ -353,7 +366,7 @@ class Toplevel1:
         self.maxtrainlen.configure(text='''maxtrainlen''')
 
         self.n_job_ent = tk.Entry(self.Frame1)
-        self.n_job_ent.place(relx=0.422, rely=0.233,height=26, relwidth=0.127)
+        self.n_job_ent.place(relx=0.422, rely=0.233, height=26, relwidth=0.127)
         self.n_job_ent.configure(background="white")
         self.n_job_ent.configure(disabledforeground="#a3a3a3")
         self.n_job_ent.configure(font="TkFixedFont")
@@ -365,8 +378,8 @@ class Toplevel1:
         self.n_job_ent.configure(selectforeground="black")
 
         self.shared_memory_ent = tk.Entry(self.Frame1)
-        self.shared_memory_ent.place(relx=0.422, rely=0.284, height=26
-                , relwidth=0.127)
+        self.shared_memory_ent.place(
+            relx=0.422, rely=0.284, height=26, relwidth=0.127)
         self.shared_memory_ent.configure(background="white")
         self.shared_memory_ent.configure(disabledforeground="#a3a3a3")
         self.shared_memory_ent.configure(font="TkFixedFont")
@@ -378,7 +391,8 @@ class Toplevel1:
         self.shared_memory_ent.configure(selectforeground="black")
 
         self.verbose_ent = tk.Entry(self.Frame1)
-        self.verbose_ent.place(relx=0.422, rely=0.335, height=26, relwidth=0.127)
+        self.verbose_ent.place(relx=0.422, rely=0.335,
+                               height=26, relwidth=0.127)
 
         self.verbose_ent.configure(background="white")
         self.verbose_ent.configure(disabledforeground="#a3a3a3")
@@ -391,8 +405,8 @@ class Toplevel1:
         self.verbose_ent.configure(selectforeground="black")
 
         self.train_rough_len_ent = tk.Entry(self.Frame1)
-        self.train_rough_len_ent.place(relx=0.422, rely=0.385, height=26
-                , relwidth=0.127)
+        self.train_rough_len_ent.place(
+            relx=0.422, rely=0.385, height=26, relwidth=0.127)
         self.train_rough_len_ent.configure(background="white")
         self.train_rough_len_ent.configure(disabledforeground="#a3a3a3")
         self.train_rough_len_ent.configure(font="TkFixedFont")
@@ -404,8 +418,8 @@ class Toplevel1:
         self.train_rough_len_ent.configure(selectforeground="black")
 
         self.train_rough_rin_ent = tk.Entry(self.Frame1)
-        self.train_rough_rin_ent.place(relx=0.422, rely=0.436, height=26
-                , relwidth=0.127)
+        self.train_rough_rin_ent.place(
+            relx=0.422, rely=0.436, height=26, relwidth=0.127)
         self.train_rough_rin_ent.configure(background="white")
         self.train_rough_rin_ent.configure(disabledforeground="#a3a3a3")
         self.train_rough_rin_ent.configure(font="TkFixedFont")
@@ -417,8 +431,8 @@ class Toplevel1:
         self.train_rough_rin_ent.configure(selectforeground="black")
 
         self.train_rough_rfin_ent = tk.Entry(self.Frame1)
-        self.train_rough_rfin_ent.place(relx=0.422, rely=0.487, height=26
-                , relwidth=0.127)
+        self.train_rough_rfin_ent.place(
+            relx=0.422, rely=0.487, height=26, relwidth=0.127)
         self.train_rough_rfin_ent.configure(background="white")
         self.train_rough_rfin_ent.configure(disabledforeground="#a3a3a3")
         self.train_rough_rfin_ent.configure(font="TkFixedFont")
@@ -430,8 +444,8 @@ class Toplevel1:
         self.train_rough_rfin_ent.configure(selectforeground="black")
 
         self.train_ft_len_ent = tk.Entry(self.Frame1)
-        self.train_ft_len_ent.place(relx=0.422, rely=0.538, height=26
-                , relwidth=0.127)
+        self.train_ft_len_ent.place(
+            relx=0.422, rely=0.538, height=26, relwidth=0.127)
         self.train_ft_len_ent.configure(background="white")
         self.train_ft_len_ent.configure(disabledforeground="#a3a3a3")
         self.train_ft_len_ent.configure(font="TkFixedFont")
@@ -443,8 +457,8 @@ class Toplevel1:
         self.train_ft_len_ent.configure(selectforeground="black")
 
         self.train_ft_rin_ent = tk.Entry(self.Frame1)
-        self.train_ft_rin_ent.place(relx=0.422, rely=0.588, height=26
-                , relwidth=0.127)
+        self.train_ft_rin_ent.place(
+            relx=0.422, rely=0.588, height=26, relwidth=0.127)
         self.train_ft_rin_ent.configure(background="white")
         self.train_ft_rin_ent.configure(disabledforeground="#a3a3a3")
         self.train_ft_rin_ent.configure(font="TkFixedFont")
@@ -456,8 +470,8 @@ class Toplevel1:
         self.train_ft_rin_ent.configure(selectforeground="black")
 
         self.train_ft_rfin_ent = tk.Entry(self.Frame1)
-        self.train_ft_rfin_ent.place(relx=0.422, rely=0.639, height=26
-                , relwidth=0.127)
+        self.train_ft_rfin_ent.place(
+            relx=0.422, rely=0.639, height=26, relwidth=0.127)
         self.train_ft_rfin_ent.configure(background="white")
         self.train_ft_rfin_ent.configure(disabledforeground="#a3a3a3")
         self.train_ft_rfin_ent.configure(font="TkFixedFont")
@@ -469,8 +483,8 @@ class Toplevel1:
         self.train_ft_rfin_ent.configure(selectforeground="black")
 
         self.train_len_factor_ent = tk.Entry(self.Frame1)
-        self.train_len_factor_ent.place(relx=0.422, rely=0.69, height=26
-                , relwidth=0.127)
+        self.train_len_factor_ent.place(
+            relx=0.422, rely=0.69, height=26, relwidth=0.127)
         self.train_len_factor_ent.configure(background="white")
         self.train_len_factor_ent.configure(disabledforeground="#a3a3a3")
         self.train_len_factor_ent.configure(font="TkFixedFont")
@@ -482,8 +496,8 @@ class Toplevel1:
         self.train_len_factor_ent.configure(selectforeground="black")
 
         self.maxtrainlen_ent = tk.Entry(self.Frame1)
-        self.maxtrainlen_ent.place(relx=0.422, rely=0.74, height=26
-                , relwidth=0.127)
+        self.maxtrainlen_ent.place(
+            relx=0.422, rely=0.74, height=26, relwidth=0.127)
         self.maxtrainlen_ent.configure(background="white")
         self.maxtrainlen_ent.configure(disabledforeground="#a3a3a3")
         self.maxtrainlen_ent.configure(font="TkFixedFont")
@@ -495,7 +509,7 @@ class Toplevel1:
         self.maxtrainlen_ent.configure(selectforeground="black")
 
         self.Mapsize_y = tk.Entry(self.Frame1)
-        self.Mapsize_y.place(relx=0.177, rely=0.325,height=26, relwidth=0.059)
+        self.Mapsize_y.place(relx=0.177, rely=0.325, height=26, relwidth=0.059)
         self.Mapsize_y.configure(background="white")
         self.Mapsize_y.configure(disabledforeground="#a3a3a3")
         self.Mapsize_y.configure(font="TkFixedFont")
@@ -507,22 +521,24 @@ class Toplevel1:
         self.Mapsize_y.configure(selectforeground="black")
 
         # initialization
-        self.Initialization_ent = ttk.Combobox(self.Frame1, values= init)
-        self.Initialization_ent.place(relx=0.135, rely=0.446, relheight=0.031
-                , relwidth=0.121)
-        self.Initialization_ent.configure(textvariable=one_page_all_support.combobox)
+        self.Initialization_ent = ttk.Combobox(self.Frame1, values=init)
+        self.Initialization_ent.place(
+            relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
+        self.Initialization_ent.configure(
+            textvariable=one_page_all_support.combobox)
         self.Initialization_ent.configure(takefocus="")
 
         # normalization
         self.Normalization_ent = ttk.Combobox(self.Frame1, values=norm)
-        self.Normalization_ent.place(relx=0.135, rely=0.385, relheight=0.031
-                , relwidth=0.121)
-        self.Normalization_ent.configure(textvariable=one_page_all_support.combobox)
+        self.Normalization_ent.place(
+            relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
+        self.Normalization_ent.configure(
+            textvariable=one_page_all_support.combobox)
         self.Normalization_ent.configure(takefocus="")
 
         self.Canvas1 = tk.Canvas(self.Frame1)
-        self.Canvas1.place(relx=0.563, rely=0.183, relheight=0.672
-                , relwidth=0.418)
+        self.Canvas1.place(relx=0.563, rely=0.183,
+                           relheight=0.672, relwidth=0.418)
         self.Canvas1.configure(background="#d9d9d9")
         self.Canvas1.configure(borderwidth="2")
         self.Canvas1.configure(highlightbackground="#d9d9d9")
@@ -535,28 +551,30 @@ class Toplevel1:
         self.Training = ttk.Button(self.Frame1)
         self.Training.place(relx=0.313, rely=0.811, height=35, width=130)
         self.Training.configure(takefocus="")
+        self.Training.configure(command=self.sm_training())
         self.Training.configure(text='''Train''')
-        self.Training.configure(command=self.sm_training)
-        
+
         # the progress bar that indicates the progress of training
         self.TProgressbar1 = ttk.Progressbar(self.Frame1)
-        self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234
-                , relheight=0.0, height=22)
+        self.TProgressbar1.place(
+            relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
 
         self.Next_vis_btn1 = ttk.Button(self.Frame1)
         self.Next_vis_btn1.place(relx=0.76, rely=0.882, height=35, width=120)
         self.Next_vis_btn1.configure(takefocus="")
         self.Next_vis_btn1.configure(text='''Next''')
-        self.Next_vis_btn1.configure(command=self.vis)
+        self.Next_vis_btn1.configure(command=self.vis())
 
-        self.Export_vis = ttk.Button(self.Frame1)
-        self.Export_vis.place(relx=0.854, rely=0.882, height=35, width=120)
-        self.Export_vis.configure(takefocus="")
-        self.Export_vis.configure(text='''Export''')
+        # self.Export_vis = ttk.Button(self.Frame1)
+        # self.Export_vis.place(relx=0.854, rely=0.882, height=35, width=120)
+        # self.Export_vis.configure(takefocus="")
+        # self.Export_vis.configure(command=self.export)
+        # self.Export_vis.configure(text='''Export''')
 
         self.Select_Model = ttk.Button(self.Frame1)
         self.Select_Model.place(relx=0.474, rely=0.811, height=35, width=140)
         self.Select_Model.configure(takefocus="")
+        self.Select_Model.configure(command=self.askopensmfile())
         self.Select_Model.configure(text='''Select Model''')
 
         self.Label1 = tk.Label(self.Frame1)
@@ -574,37 +592,41 @@ class Toplevel1:
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
-        self.vis_gen.configure(command=self.vis)
+        self.vis_gen.configure(command=self.vis())
         self.vis_gen.configure(text='''Gen Vis''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
-        self.Cluster_Inspector.place(relx=0.651, rely=0.882, height=35
-                , width=163)
+        self.Cluster_Inspector.place(
+            relx=0.651, rely=0.882, height=35, width=163)
         self.Cluster_Inspector.configure(takefocus="")
+        self.Cluster_Inspector.configure(command=self.Cluster_Inspector())
         self.Cluster_Inspector.configure(text='''Cluster Inspector''')
 
-        self.Comp_Name_ent = ttk.Combobox(self.Frame1, values=names)
-        self.Comp_Name_ent.place(relx=0.135, rely=0.507, relheight=0.031
-                , relwidth=0.121)
-        self.Comp_Name_ent.configure(textvariable=one_page_all_support.combobox)
-        self.Comp_Name_ent.configure(background="#000000")
-        self.Comp_Name_ent.configure(takefocus="")
+        # self.Comp_Name_ent = ttk.Combobox(self.Frame1, values=names)
+        # self.Comp_Name_ent.place(
+        #     relx=0.135, rely=0.507, relheight=0.031, relwidth=0.121)
+        # self.Comp_Name_ent.configure(
+        #     textvariable=one_page_all_support.combobox)
+        # self.Comp_Name_ent.configure(background="#000000")
+        # self.Comp_Name_ent.configure(takefocus="")
 
         self.Find_File = ttk.Button(self.Frame1)
-        self.Find_File.place(relx=0.214, rely=0.274, height=35, width=120)
+        self.Find_File.place(relx=0.109, rely=0.274, height=35, width=120)
         self.Find_File.configure(takefocus="")
-        self.Find_File.configure(text='''Find File''')
+        self.Find_File.configure(command=self.askopencsvfile())
+        self.Find_File.configure(text='''Select Data''')
 
         self.Message1 = tk.Message(self.Frame1)
-        self.Message1.place(relx=0.036, rely=0.639, relheight=0.109
-                , relwidth=0.249)
+        self.Message1.place(relx=0.036, rely=0.639,
+                            relheight=0.109, relwidth=0.249)
         self.Message1.configure(anchor='nw')
         self.Message1.configure(background="#d9d9d9")
         self.Message1.configure(font="-family {Segoe UI} -size 11")
         self.Message1.configure(foreground="#000000")
         self.Message1.configure(highlightbackground="#d9d9d9")
         self.Message1.configure(highlightcolor="black")
-        self.Message1.configure(text='''This is a SOM Tool that trains the input design matrix and output a model and visualizations.''')
+        self.Message1.configure(
+            text='''This is a SOM Tool that trains the input design matrix and output a model and visualizations.''')
         self.Message1.configure(width=478)
 
         self.Lattice = tk.Label(self.Frame1)
@@ -616,28 +638,32 @@ class Toplevel1:
         self.Lattice.configure(text='''Lattice''')
 
         self.Lattice_ent = ttk.Combobox(self.Frame1, values=lattice)
-        self.Lattice_ent.place(relx=0.135, rely=0.568, relheight=0.031
-                , relwidth=0.121)
+        self.Lattice_ent.place(relx=0.135, rely=0.568,
+                               relheight=0.031, relwidth=0.121)
         self.Lattice_ent.configure(textvariable=one_page_all_support.combobox)
         self.Lattice_ent.configure(takefocus="")
-    
-    # def print_result(self):
-    #     print(self.n_job_ent.get())
+
+    # embedded functions are here
+
+    # ask to open file
+    # def askopencsvfile(self):
+    #     return tkFileDialog.askopenfile(initialdir="/", title="Select data file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
+
+    def askopensmfile(self):
+        return tkFileDialog.askopenfile(initialdir="/", title="Select model file", filetypes=(("sm files", "*.File"), ("all files", "*.*")))
 
     # read data
-    # callback1 --> select data 
+    # callback1 --> select data
     def read_data(self):
         """
         input: csv file chosen from the directory
         """
-        data_file = self.Data_entry.get()
-        try:
-            f = open(str(data_file))
-            # return pd.DataFrame(data_file)
-        except IOError:
-            print("File not accessible")
-        finally:
-            return pd.read_csv(data_file)
+        file = tkFileDialog.askopenfile(mode ='r', filetypes =[('csv Files', '*.csv')]) 
+        if file is not None:
+            content = pd.read_csv(file)
+            return content
+        else:
+            assert("Input Error, Select Again")
 
     def read_comp_names(self):
         """
@@ -647,20 +673,17 @@ class Toplevel1:
         return [names for name in data.columns]
 
     # training som, export model and print errors
-    def sm_training(self, data, mapsize, normalization, initialization, 
-                    component_names, lattice, n_job, verbose, 
-                    train_rough_len, train_finetune_len, file_name):
+    def sm_training(self):
         """
         Train the model with different parameters.
         """
-        dir_name = "Models/ "
         data = self.read_data()
 
         # basic parameters for initialization
-        mapsize = (self.Mapsize_x.get(),self.Mapsize_y.get())
+        mapsize = (self.Mapsize_x.get(), self.Mapsize_y.get())
         normalization = self.Normalization_ent.get()
         initialization = self.Initialization_ent.get()
-        component_names = self.Comp_Name_ent.get()
+        component_names = self.read_comp_names()
         lattice = self.Lattice_ent.get()
 
         # parameters for training and tuning
@@ -677,20 +700,24 @@ class Toplevel1:
         maxtrainlen = self.maxtrainlen_ent.get()
 
         # initialize the build
-        sm = SOMFactory().build(data, mapsize,normalization,initialization,component_names,lattice)
+        sm = SOMFactory().build(data, mapsize, normalization,
+                                initialization, component_names, lattice)
         # start training
-        sm.train(n_job,shared_memory,verbose,train_rough_len,train_rough_radiusin,train_rough_radiusfin,train_finetune_len,
-        train_finetune_radiusin,train_finetune_radiusfin,train_len_factor,maxtrainlen)
+        sm.train(n_job, shared_memory, verbose, train_rough_len, train_rough_radiusin, train_rough_radiusfin, train_finetune_len,
+                 train_finetune_radiusin, train_finetune_radiusfin, train_len_factor, maxtrainlen)
 
         # errors calculation
         topographic_error = sm.calculate_topographic_error()
         quantitization_error = np.mean(sm._bmu[1])
 
-        # if multiple runs are required 
+        # if multiple runs are required
         #joblib.dump(sm, "model_{}.joblib".format(i))
 
         # dump the model
-        pickle.dump(sm, open(os.path.join(dir_name, file_name), "wb"))
+        # dir_name = "Models"
+        # file_name = "sm_model"
+
+        pickle.dump(sm, open("Models/sm_model", "wb"))
 
         # print errors on the cmd prompt
         print("the topographic error is %s " % topographic_error)
@@ -703,39 +730,39 @@ class Toplevel1:
         The file should be the trained sm model in the directory
         This operation 
         """
-        dir_name = "Models/ "
-        model_file = self.Select_Model.get()
-        sm = pickle.load(open(os.path.join(dir_name, model_file),"rb"))
-        return sm
+        file = askopenfilename(initialdir = "/",title = "Select file",filetypes =[("All files", "*.*")]) 
+        if file is not None:
+            return pickle.load(open(file, "rb"))
 
     # generate vis and export to dir_name + filename
     def vis(self):
         """
         generate cluster map visualization
         """
-
         # the followings are default, we can customize later
         title = "Cluster"
         dir_name = "Images/"
         file_name = "cluster.png"
 
         data = self.read_data()
-        sm = self.select_model().get()
+        sm = self.select_model()
 
         labels = labels = list(data.index)
         n_clusters = 5
 
         cmap = plt.get_cmap("tab20")
         n_palette = 20  # number of different colors in this color palette
-        color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
+        color_list = [cmap((i % n_palette)/n_palette)
+                      for i in range(n_clusters)]
         msz = sm.codebook.mapsize
         proj = sm.project_data(sm.data_raw)
         coord = sm.bmu_ind_to_xy(proj)
 
-        fig, ax = plt.subplots(1, 1, figsize=(40,40))
+        fig, ax = plt.subplots(1, 1, figsize=(40, 40))
 
         #cl_labels = som.cluster(n_clusters)
-        cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, random_state = 555).fit_predict(sm.codebook.matrix)
+        cl_labels = sklearn.cluster.KMeans(
+            n_clusters=n_clusters, random_state=555).fit_predict(sm.codebook.matrix)
 
         # fill each rectangular unit area with cluster color
         # and draw line segment to the border of cluster
@@ -743,8 +770,8 @@ class Toplevel1:
 
         # borders
         ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
-            cmap=cmap, norm=norm, edgecolors='face',
-            lw=0.5, alpha=0.5)
+                      cmap=cmap, norm=norm, edgecolors='face',
+                      lw=0.5, alpha=0.5)
 
         ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
         ax.axis('off')
@@ -764,15 +791,15 @@ class Toplevel1:
         #     ax.text(x+0.3, y+0.3, label,
         #             horizontalalignment='left', verticalalignment='bottom',
         #             rotation=30, fontsize=15, weight='semibold')
-            
+
         plt.title(title)
 
         # save as png file
         plt.savefig(os.path.join(dir_name, file_name)+".png")
 
-
     # cluster inspector
-    def cluster_inspector(self, sm):
+
+    def cluster_inspector(self):
         """
         Input: sm is the som model
         data is the input data matrix
@@ -784,21 +811,17 @@ class Toplevel1:
         logging.getLogger().setLevel(logging.WARNING)
 
         cl_labels = ci.kmeans_clust(sm, 5)
-        clusters_list = ci.sort_materials_by_cluster(sm,data,cl_labels)
+        clusters_list = ci.sort_materials_by_cluster(sm, data, cl_labels)
 
         # # This makes it so it will display the full lists
         pd.set_option('display.max_rows', 2000)
         pd.set_option('display.width', 1000)
-        pd.set_option("display.max_columns",50)
+        pd.set_option("display.max_columns", 50)
 
         # # This should be the last statement of the cell, to make it display
         # # That, or assign the return value to a variable, and have that variable be the final expression in a cell
         ci.cluster_tabs(sm, data, clusters_list, cl_labels)
 
+
 if __name__ == '__main__':
     vp_start_gui()
-
-
-
-
-
