@@ -74,6 +74,7 @@ def vp_start_gui():
 
 
 w = None
+dir_name = os.path.dirname(os.path.realpath(__file__))
 
 
 def create_Toplevel1(root, *args, **kwargs):
@@ -512,8 +513,8 @@ class Toplevel1:
         self.Next_vis_btn1 = ttk.Button(self.Frame1)
         self.Next_vis_btn1.place(relx=0.76, rely=0.882, height=35, width=120)
         self.Next_vis_btn1.configure(takefocus="")
-        self.Next_vis_btn1.configure(text='''Next''')
-        self.Next_vis_btn1.configure(command=lambda: self.cluster_map())
+        self.Next_vis_btn1.configure(text='''Umat Map''')
+        # self.Next_vis_btn1.configure(command=lambda: self.umat())
 
         # self.Select_Model = ttk.Button(self.Frame1)
         # self.Select_Model.place(relx=0.474, rely=0.811, height=35, width=140)
@@ -524,15 +525,15 @@ class Toplevel1:
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
-        self.vis_gen.configure(command=lambda:self.vis())
-        self.vis_gen.configure(text='''Gen Vis''')
+        self.vis_gen.configure(command=lambda:self.cluster_map())
+        self.vis_gen.configure(text='''Cluster Map''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
         self.Cluster_Inspector.place(
             relx=0.651, rely=0.882, height=35, width=163)
         self.Cluster_Inspector.configure(takefocus="")
-        # self.Cluster_Inspector.configure(command=self.Cluster_Inspector())
-        self.Cluster_Inspector.configure(text='''Cluster Inspector''')
+        # self.Cluster_Inspector.configure(command=self.heatmap())
+        self.Cluster_Inspector.configure(text='''Component Maps''')
 
         # message for short introduction
         self.Message1 = tk.Message(self.Frame1)
@@ -604,13 +605,13 @@ class Toplevel1:
         print(type(self.shared_memory_ent.get()))
         print((self.Mapsize_x.get(), self.Mapsize_y.get()))
         print(type(self.train_len_factor_ent.get()))
-        print(type(self.Mapsize_x.get()))
+        print(self.Cluster_ent.get())
 
     def open_csvfile(self):
         """
         open and load csv data
         """
-        file=askopenfilename(initialdir="/", title="Select Data",
+        file=askopenfilename(initialdir=dir_name, title="Select Data",
                              filetypes=[("csv files", "*.csv")])
         if file is not None:
             content=open(file, "rb")
@@ -625,7 +626,7 @@ class Toplevel1:
         """
         open and load som model file
         """
-        file=askopenfilename(initialdir="/", title="Select file", filetypes=[("All files", "*.*")])
+        file=askopenfilename(initialdir=dir_name, title="Select file", filetypes=[("All files", "*.*")])
         if file is not None:
             # print(content)
             content = open(file, "rb")
@@ -635,13 +636,13 @@ class Toplevel1:
         """
         Train the model with different parameters.
         """
-        file=askopenfilename(initialdir="/", title="Select Data",
+        file=askopenfilename(initialdir=dir_name, title="Select Data",
                              filetypes=[("csv files", "*.csv")])
         content=open(file, "rb")
         data=pd.read_csv(content)
         ind=data[data.columns[0]]
         
-        self.data=data.set_index(ind)
+        self.data = data.set_index(ind)
         self.comp_names=[name for name in self.data.columns]
         self.index = self.data.index
 
@@ -698,17 +699,24 @@ class Toplevel1:
         dir_name="Images/"
         file_name="cluster.png"
 
-        file=askopenfilename(initialdir="/", title="Select file", filetypes=[("All files", "*.*")])
-        content = open(file, "rb")
+        file_d=askopenfilename(initialdir=dir_name, title="Select Data", filetypes=[("csv files", "*.csv")])
+        content1=open(file_d, "rb")
+        data=pd.read_csv(content1)
+        ind=data[data.columns[0]]
+        
+        self.data = data.set_index(ind)
+        self.comp_names=[name for name in self.data.columns]
 
-        self.sm = pickle.load(content)
-        self.labels=list(self.index)
+        file=askopenfilename(initialdir=dir_name, title="Select file", filetypes=[("All files", "*.*")])
+        content2 = open(file, "rb")
+
+        self.sm = pickle.load(content2)
+        self.labels = list(self.data.index)
         self.n_clusters=int(self.Cluster_ent.get())
-
+        
         cmap=plt.get_cmap("tab20")
         n_palette=20  # number of different colors in this color palette
-        color_list=[cmap((i % n_palette)/n_palette)
-                      for i in range(self.n_clusters)]
+        color_list=[cmap((i % n_palette)/n_palette) for i in range(self.n_clusters)]
         msz = self.sm.codebook.mapsize
         proj=self.sm.project_data(self.sm.data_raw)
         coord=self.sm.bmu_ind_to_xy(proj)
@@ -750,116 +758,118 @@ class Toplevel1:
         plt.title(title)
 
         # save as png file
-        plt.savefig(os.path.join(dir_name, file_name)+".png")
+        plt.savefig(os.path.join(dir_name, file_name))
 
-    def umat(self):
-        umatrixTFP = tfprop_vis.UMatrixTFP(0, 0, '', text_size=14)
-        cmap = plt.get_cmap('RdYlBu_r')  # set color map
-        umat = umatrixTFP.show(self.sm, pd.DataFrame(self.labels),pd.DataFrame(self.labels), "Images/umat_hexa.png",show_data=True, labels=False, contooor=True,cmap=cmap,blob = False)
+    # def umat(self):
+    #     self.n_clusters=int(self.Cluster_ent.get())
+    #     umatrixTFP = tfprop_vis.UMatrixTFP(0, 0, '', text_size=14)
+    #     cmap = plt.get_cmap('RdYlBu_r')  # set color map
+    #     umat = umatrixTFP.show(self.sm, pd.DataFrame(self.labels),pd.DataFrame(self.labels), "Images/umat_hexa.png",show_data=True, labels=False, contooor=True,cmap=cmap,blob = False)
     
-    def heatmap(self):
-        htmap_x, htmap_y = (10, 10)
-        viewTFP = tfprop_vis.ViewTFP(htmap_x, htmap_y, '',text_size=10)
+    # def heatmap(self):
+    #     self.n_clusters=int(self.Cluster_ent.get())
+    #     htmap_x, htmap_y = (10, 10)
+    #     viewTFP = tfprop_vis.ViewTFP(htmap_x, htmap_y, '',text_size=10)
 
-        cmap = plt.get_cmap('RdYlBu_r')  # set color map
-        self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
+    #     cmap = plt.get_cmap('RdYlBu_r')  # set color map
+    #     self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
 
-        for i in range(0,11):
-            comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
-                        which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
+    #     for i in range(0,11):
+    #         comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
+    #                     which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
     
-    def clusteringmap_category(self):
-        # sm,labels,n_clusters,dataset,colorcategory,savepath
+    # def clusteringmap_category(self):
+    #     # sm,labels,n_clusters,dataset,colorcategory,savepath
         
-        savepath = "Images/"
-        dataset = self.data
-        labels = self.data.index
-        n_clusters = self.n_clusters
-        colorcategory = "?" # needs to be one thing in the dataset, it can be outside of data
+    #     savepath = "Images/"
+    #     dataset = self.data
+    #     labels = self.data.index
+    #     n_clusters = self.n_clusters
+    #     colorcategory = "?" # needs to be one thing in the dataset, it can be outside of data
 
-        categories = self.data[colorcategory] #if colorcategory is one col of the dataset
-        cmap = plt.get_cmap("tab20") #cmap for background
-        n_palette = 20  # number of different colors in this color palette
-        color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
-        msz = self.sm.codebook.mapsize
-        proj = self.sm.project_data(self.sm.data_raw)
-        coord = self.sm.bmu_ind_to_xy(proj)
-        cl_labels = self.cl_labels
+    #     categories = self.data[colorcategory] #if colorcategory is one col of the dataset
+    #     cmap = plt.get_cmap("tab20") #cmap for background
+    #     n_palette = 20  # number of different colors in this color palette
+    #     color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
+    #     msz = self.sm.codebook.mapsize
+    #     proj = self.sm.project_data(self.sm.data_raw)
+    #     coord = self.sm.bmu_ind_to_xy(proj)
+    #     cl_labels = self.cl_labels
 
-        fig, ax = plt.subplots(1, 1, figsize=(30,30))
+    #     fig, ax = plt.subplots(1, 1, figsize=(30,30))
 
-        # fill each rectangular unit area with cluster color
-        #  and draw line segment to the border of cluster
-        norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
-        ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
-                    cmap=cmap, norm=norm, edgecolors='face',
-                    lw=0.5, alpha=0.5)
+    #     # fill each rectangular unit area with cluster color
+    #     #  and draw line segment to the border of cluster
+    #     norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
+    #     ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
+    #                 cmap=cmap, norm=norm, edgecolors='face',
+    #                 lw=0.5, alpha=0.5)
 
-        ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
-        ax.axis('off')
+    #     ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
+    #     ax.axis('off')
 
-        categoryname = list(dataset.groupby(colorcategory).count().index)
-        categories_int = categories.apply(categoryname.index)
+    #     categoryname = list(dataset.groupby(colorcategory).count().index)
+    #     categories_int = categories.apply(categoryname.index)
 
-        N = len(categoryname)
-        cmap_labels = plt.cm.gist_ncar
-        # extract all colors from the .jet map
-        cmaplist = [cmap_labels(i) for i in range(cmap_labels.N)]
-        # create the new map
-        cmap_labels = cmap_labels.from_list('Custom cmap', cmaplist, cmap_labels.N)
-        # define the bins and normalize
-        bounds = np.linspace(0,N,N+1)
-        norm_labels = mpl.colors.BoundaryNorm(bounds, cmap_labels.N)
+    #     N = len(categoryname)
+    #     cmap_labels = plt.cm.gist_ncar
+    #     # extract all colors from the .jet map
+    #     cmaplist = [cmap_labels(i) for i in range(cmap_labels.N)]
+    #     # create the new map
+    #     cmap_labels = cmap_labels.from_list('Custom cmap', cmaplist, cmap_labels.N)
+    #     # define the bins and normalize
+    #     bounds = np.linspace(0,N,N+1)
+    #     norm_labels = mpl.colors.BoundaryNorm(bounds, cmap_labels.N)
 
-        scat = ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c=categories_int,s=300,cmap=cmap_labels,norm=norm_labels)
-        cbar = plt.colorbar(scat, spacing='proportional',ticks=bounds)
-        cbar.ax.get_yaxis().set_ticks([])
+    #     scat = ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c=categories_int,s=300,cmap=cmap_labels,norm=norm_labels)
+    #     cbar = plt.colorbar(scat, spacing='proportional',ticks=bounds)
+    #     cbar.ax.get_yaxis().set_ticks([])
         
-        for j, lab in enumerate(categoryname):
-            cbar.ax.text(1, (2 * j + 1) / (2*(len(categoryname))), lab, ha='left', va='center', fontsize=30)
-        cbar.ax.get_yaxis().labelpad = 15
-        #cbar.ax.set_ylabel('# of contacts', rotation=270)
-        ax.axis('off')
+    #     for j, lab in enumerate(categoryname):
+    #         cbar.ax.text(1, (2 * j + 1) / (2*(len(categoryname))), lab, ha='left', va='center', fontsize=30)
+    #     cbar.ax.get_yaxis().labelpad = 15
+    #     #cbar.ax.set_ylabel('# of contacts', rotation=270)
+    #     ax.axis('off')
 
-        for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
-            x += 0.2
-            y += 0.2
-            # "+ 0.1" means shift of label location to upperright direction
+    #     for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
+    #         x += 0.2
+    #         y += 0.2
+    #         # "+ 0.1" means shift of label location to upperright direction
 
-            # randomize the location of the label
-            #   not to be overwrapped with each other
-            # x_text += 0.1 * np.random.randn()
-            y += 0.3 * np.random.randn()
+    #         # randomize the location of the label
+    #         #   not to be overwrapped with each other
+    #         # x_text += 0.1 * np.random.randn()
+    #         y += 0.3 * np.random.randn()
 
-            # wrap of label for chemical compound
-            #label = str_wrap(label)
+    #         # wrap of label for chemical compound
+    #         #label = str_wrap(label)
 
-    #         ax.text(x+0.3, y+0.3, label,
-    #                 horizontalalignment='left', verticalalignment='bottom',
-    #                 rotation=30, fontsize=12, weight='semibold')
-            #cl_labels = som.cluster(n_clusters)
-        cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, 
-                                        random_state = 555).fit_predict(self.sm.codebook.matrix)
+    # #         ax.text(x+0.3, y+0.3, label,
+    # #                 horizontalalignment='left', verticalalignment='bottom',
+    # #                 rotation=30, fontsize=12, weight='semibold')
+    #         #cl_labels = som.cluster(n_clusters)
+    #     cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, 
+    #                                     random_state = 555).fit_predict(self.sm.codebook.matrix)
 
-        for i in range(len(cl_labels)):
-            rect_x = [i // msz[1], i // msz[1],
-                    i // msz[1] + 1, i // msz[1] + 1]
-            rect_y = [i % msz[1], i % msz[1] + 1,
-                    i % msz[1] + 1, i % msz[1]]
+    #     for i in range(len(cl_labels)):
+    #         rect_x = [i // msz[1], i // msz[1],
+    #                 i // msz[1] + 1, i // msz[1] + 1]
+    #         rect_y = [i % msz[1], i % msz[1] + 1,
+    #                 i % msz[1] + 1, i % msz[1]]
 
-            if i % msz[1] + 1 < msz[1]:  # top border
-                if cl_labels[i] != cl_labels[i+1]:
-                    ax.plot([rect_x[1], rect_x[2]],
-                            [rect_y[1], rect_y[2]], 'k-', lw=2.5)
+    #         if i % msz[1] + 1 < msz[1]:  # top border
+    #             if cl_labels[i] != cl_labels[i+1]:
+    #                 ax.plot([rect_x[1], rect_x[2]],
+    #                         [rect_y[1], rect_y[2]], 'k-', lw=2.5)
 
-            if i + msz[1] < len(cl_labels):  # right border
-                if cl_labels[i] != cl_labels[i+msz[1]]:
-                    ax.plot([rect_x[2], rect_x[3]],
-                            [rect_y[2], rect_y[3]], 'k-', lw=2.5)
+    #         if i + msz[1] < len(cl_labels):  # right border
+    #             if cl_labels[i] != cl_labels[i+msz[1]]:
+    #                 ax.plot([rect_x[2], rect_x[3]],
+    #                         [rect_y[2], rect_y[3]], 'k-', lw=2.5)
         
-        plt.savefig(savepath)
-        plt.title(colorcategory,fontsize = 50)
-        return cl_labels
+    #     plt.savefig(savepath)
+    #     plt.title(colorcategory,fontsize = 50)
+    #     return cl_labels
 
 
 if __name__ == '__main__':
