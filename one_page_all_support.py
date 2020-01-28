@@ -19,6 +19,8 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = True
 
+from tkinter import Entry, IntVar, Tk, StringVar
+
 def set_Tk_var():
     global combobox
     combobox = tk.StringVar()

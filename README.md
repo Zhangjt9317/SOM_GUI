@@ -54,6 +54,11 @@ python one_page_all.py
 
 ##### 1/27/2020
 
-For some reason jupyter does not start successfully based on the current environment.yml, but the rest of them function normally. I would ignore this issue right now and focus getting the MVP done soon. The following are issues that need to be addressed immediately. 
+For some reason jupyter does not start successfully based on the current environment.yml, but the rest of them function normally. I would ignore this issue right now and focus getting the MVP done soon. 
 
-1. 
+1. I have successfully trained the model using GUI
+2. I need to automate visualization generation
+3. Make the progress bar work
+
+
+The training phase and visualization phase are separated. After training the model we can select any of them (if you trained multiple) and generate visualization based on them.

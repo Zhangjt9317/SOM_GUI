@@ -26,6 +26,7 @@ from tkinter import filedialog as tkFileDialog
 from tkinter.filedialog import askopenfile
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
+from tkinter import Entry, IntVar, Tk, StringVar, BooleanVar
 
 # import sompy / tfprop_sompy related packages
 import math
@@ -61,6 +62,7 @@ warnings.filterwarnings('ignore')
 
 logging.getLogger('matplotlib.font_manager').disabled = True
 
+
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
@@ -72,6 +74,7 @@ def vp_start_gui():
 
 
 w = None
+
 
 def create_Toplevel1(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
@@ -89,11 +92,6 @@ def destroy_Toplevel1():
     w.destroy()
     w = None
 
-
-# combobox setting
-init = ["pca", "random"]
-norm = ["var"]
-lattice = ["hexa", "rect"]
 
 class Toplevel1:
     def __init__(self, top=None):
@@ -122,6 +120,10 @@ class Toplevel1:
         top.configure(highlightbackground="#d9d9d9")
         top.configure(highlightcolor="black")
 
+        self.v = StringVar()
+        self.n = IntVar()
+        self.b = BooleanVar()
+
         self.Frame1 = tk.Frame(top)
         self.Frame1.place(relx=0.0, rely=0.0, relheight=1.0, relwidth=1.0)
         self.Frame1.configure(relief='groove')
@@ -142,30 +144,6 @@ class Toplevel1:
         self.Title.configure(highlightbackground="#d9d9d9")
         self.Title.configure(highlightcolor="black")
         self.Title.configure(text='''SOM Trainer''')
-
-        # self.Data_entry = tk.Entry(self.Frame1)
-        # self.Data_entry.place(relx=0.109, rely=0.274,height=26, relwidth=0.096)
-        # self.Data_entry.configure(background="white")
-        # self.Data_entry.configure(disabledforeground="#a3a3a3")
-        # self.Data_entry.configure(font="TkFixedFont")
-        # self.Data_entry.configure(foreground="#000000")
-        # self.Data_entry.configure(highlightbackground="#d9d9d9")
-        # self.Data_entry.configure(highlightcolor="black")
-        # self.Data_entry.configure(insertbackground="black")
-        # self.Data_entry.configure(selectbackground="#c4c4c4")
-        # self.Data_entry.configure(selectforeground="black")
-
-        self.Data = tk.Label(self.Frame1)
-        self.Data.place(relx=0.042, rely=0.274, height=31, width=43)
-        self.Data.configure(activebackground="#f9f9f9")
-        self.Data.configure(activeforeground="black")
-        self.Data.configure(anchor='w')
-        self.Data.configure(background="#d9d9d9")
-        self.Data.configure(disabledforeground="#a3a3a3")
-        self.Data.configure(foreground="#000000")
-        self.Data.configure(highlightbackground="#d9d9d9")
-        self.Data.configure(highlightcolor="black")
-        self.Data.configure(text='''Data''')
 
         self.Mapsize = tk.Label(self.Frame1)
         self.Mapsize.place(relx=0.042, rely=0.325, height=31, width=71)
@@ -203,20 +181,9 @@ class Toplevel1:
         self.Initialization.configure(highlightcolor="black")
         self.Initialization.configure(text='''Initialization''')
 
-        # self.Comp_Name = tk.Label(self.Frame1)
-        # self.Comp_Name.place(relx=0.042, rely=0.507, height=31, width=161)
-        # self.Comp_Name.configure(activebackground="#f9f9f9")
-        # self.Comp_Name.configure(activeforeground="black")
-        # self.Comp_Name.configure(anchor='w')
-        # self.Comp_Name.configure(background="#d9d9d9")
-        # self.Comp_Name.configure(disabledforeground="#a3a3a3")
-        # self.Comp_Name.configure(foreground="#000000")
-        # self.Comp_Name.configure(highlightbackground="#d9d9d9")
-        # self.Comp_Name.configure(highlightcolor="black")
-        # self.Comp_Name.configure(text='''Component Names''')
-
         self.Mapsize_x = tk.Entry(self.Frame1)
-        self.Mapsize_x.place(relx=0.109, rely=0.325, height=26, relwidth=0.054)
+        self.Mapsize_x.place(relx=0.135, rely=0.325, height=26, relwidth=0.054)
+        self.Mapsize_x.configure(textvariable=IntVar())
         self.Mapsize_x.configure(background="white")
         self.Mapsize_x.configure(disabledforeground="#a3a3a3")
         self.Mapsize_x.configure(font="TkFixedFont")
@@ -350,20 +317,9 @@ class Toplevel1:
         self.train_len_factor.configure(highlightcolor="black")
         self.train_len_factor.configure(text='''train_len_factor''')
 
-        self.maxtrainlen = tk.Label(self.Frame1)
-        self.maxtrainlen.place(relx=0.313, rely=0.74, height=31, width=97)
-        self.maxtrainlen.configure(activebackground="#f9f9f9")
-        self.maxtrainlen.configure(activeforeground="black")
-        self.maxtrainlen.configure(anchor='w')
-        self.maxtrainlen.configure(background="#d9d9d9")
-        self.maxtrainlen.configure(disabledforeground="#a3a3a3")
-        self.maxtrainlen.configure(foreground="#000000")
-        self.maxtrainlen.configure(highlightbackground="#d9d9d9")
-        self.maxtrainlen.configure(highlightcolor="black")
-        self.maxtrainlen.configure(text='''maxtrainlen''')
-
         self.n_job_ent = tk.Entry(self.Frame1)
         self.n_job_ent.place(relx=0.422, rely=0.233, height=26, relwidth=0.127)
+        self.n_job_ent.configure(textvariable=IntVar())
         self.n_job_ent.configure(background="white")
         self.n_job_ent.configure(disabledforeground="#a3a3a3")
         self.n_job_ent.configure(font="TkFixedFont")
@@ -374,7 +330,8 @@ class Toplevel1:
         self.n_job_ent.configure(selectbackground="#c4c4c4")
         self.n_job_ent.configure(selectforeground="black")
 
-        self.shared_memory_ent = tk.Entry(self.Frame1)
+        self.shared_memory_ent = tk.Entry(
+            self.Frame1, textvariable=StringVar())
         self.shared_memory_ent.place(
             relx=0.422, rely=0.284, height=26, relwidth=0.127)
         self.shared_memory_ent.configure(background="white")
@@ -387,10 +344,9 @@ class Toplevel1:
         self.shared_memory_ent.configure(selectbackground="#c4c4c4")
         self.shared_memory_ent.configure(selectforeground="black")
 
-        self.verbose_ent = tk.Entry(self.Frame1)
+        self.verbose_ent = tk.Entry(self.Frame1, textvariable=StringVar())
         self.verbose_ent.place(relx=0.422, rely=0.335,
                                height=26, relwidth=0.127)
-
         self.verbose_ent.configure(background="white")
         self.verbose_ent.configure(disabledforeground="#a3a3a3")
         self.verbose_ent.configure(font="TkFixedFont")
@@ -404,6 +360,7 @@ class Toplevel1:
         self.train_rough_len_ent = tk.Entry(self.Frame1)
         self.train_rough_len_ent.place(
             relx=0.422, rely=0.385, height=26, relwidth=0.127)
+        self.train_rough_len_ent.configure(textvariable=IntVar())
         self.train_rough_len_ent.configure(background="white")
         self.train_rough_len_ent.configure(disabledforeground="#a3a3a3")
         self.train_rough_len_ent.configure(font="TkFixedFont")
@@ -417,6 +374,7 @@ class Toplevel1:
         self.train_rough_rin_ent = tk.Entry(self.Frame1)
         self.train_rough_rin_ent.place(
             relx=0.422, rely=0.436, height=26, relwidth=0.127)
+        self.train_rough_rin_ent.configure(textvariable=IntVar())
         self.train_rough_rin_ent.configure(background="white")
         self.train_rough_rin_ent.configure(disabledforeground="#a3a3a3")
         self.train_rough_rin_ent.configure(font="TkFixedFont")
@@ -428,8 +386,8 @@ class Toplevel1:
         self.train_rough_rin_ent.configure(selectforeground="black")
 
         self.train_rough_rfin_ent = tk.Entry(self.Frame1)
-        self.train_rough_rfin_ent.place(
-            relx=0.422, rely=0.487, height=26, relwidth=0.127)
+        self.train_rough_rfin_ent.configure(textvariable=IntVar())
+        self.train_rough_rfin_ent.place(relx=0.422, rely=0.487, height=26, relwidth=0.127)
         self.train_rough_rfin_ent.configure(background="white")
         self.train_rough_rfin_ent.configure(disabledforeground="#a3a3a3")
         self.train_rough_rfin_ent.configure(font="TkFixedFont")
@@ -441,9 +399,9 @@ class Toplevel1:
         self.train_rough_rfin_ent.configure(selectforeground="black")
 
         self.train_ft_len_ent = tk.Entry(self.Frame1)
-        self.train_ft_len_ent.place(
-            relx=0.422, rely=0.538, height=26, relwidth=0.127)
+        self.train_ft_len_ent.place(relx=0.422, rely=0.538, height=26, relwidth=0.127)
         self.train_ft_len_ent.configure(background="white")
+        self.train_ft_len_ent.configure(textvariable=IntVar())
         self.train_ft_len_ent.configure(disabledforeground="#a3a3a3")
         self.train_ft_len_ent.configure(font="TkFixedFont")
         self.train_ft_len_ent.configure(foreground="#000000")
@@ -454,8 +412,8 @@ class Toplevel1:
         self.train_ft_len_ent.configure(selectforeground="black")
 
         self.train_ft_rin_ent = tk.Entry(self.Frame1)
-        self.train_ft_rin_ent.place(
-            relx=0.422, rely=0.588, height=26, relwidth=0.127)
+        self.train_ft_rin_ent.place(relx=0.422, rely=0.588, height=26, relwidth=0.127)
+        self.train_ft_rin_ent.configure(textvariable=IntVar())
         self.train_ft_rin_ent.configure(background="white")
         self.train_ft_rin_ent.configure(disabledforeground="#a3a3a3")
         self.train_ft_rin_ent.configure(font="TkFixedFont")
@@ -467,8 +425,8 @@ class Toplevel1:
         self.train_ft_rin_ent.configure(selectforeground="black")
 
         self.train_ft_rfin_ent = tk.Entry(self.Frame1)
-        self.train_ft_rfin_ent.place(
-            relx=0.422, rely=0.639, height=26, relwidth=0.127)
+        self.train_ft_rfin_ent.place(relx=0.422, rely=0.639, height=26, relwidth=0.127)
+        self.train_ft_rfin_ent.configure(textvariable=IntVar())
         self.train_ft_rfin_ent.configure(background="white")
         self.train_ft_rfin_ent.configure(disabledforeground="#a3a3a3")
         self.train_ft_rfin_ent.configure(font="TkFixedFont")
@@ -480,8 +438,8 @@ class Toplevel1:
         self.train_ft_rfin_ent.configure(selectforeground="black")
 
         self.train_len_factor_ent = tk.Entry(self.Frame1)
-        self.train_len_factor_ent.place(
-            relx=0.422, rely=0.69, height=26, relwidth=0.127)
+        self.train_len_factor_ent.place(relx=0.422, rely=0.69, height=26, relwidth=0.127)
+        self.train_len_factor_ent.configure(textvariable=IntVar())
         self.train_len_factor_ent.configure(background="white")
         self.train_len_factor_ent.configure(disabledforeground="#a3a3a3")
         self.train_len_factor_ent.configure(font="TkFixedFont")
@@ -492,21 +450,9 @@ class Toplevel1:
         self.train_len_factor_ent.configure(selectbackground="#c4c4c4")
         self.train_len_factor_ent.configure(selectforeground="black")
 
-        self.maxtrainlen_ent = tk.Entry(self.Frame1)
-        self.maxtrainlen_ent.place(
-            relx=0.422, rely=0.74, height=26, relwidth=0.127)
-        self.maxtrainlen_ent.configure(background="white")
-        self.maxtrainlen_ent.configure(disabledforeground="#a3a3a3")
-        self.maxtrainlen_ent.configure(font="TkFixedFont")
-        self.maxtrainlen_ent.configure(foreground="#000000")
-        self.maxtrainlen_ent.configure(highlightbackground="#d9d9d9")
-        self.maxtrainlen_ent.configure(highlightcolor="black")
-        self.maxtrainlen_ent.configure(insertbackground="black")
-        self.maxtrainlen_ent.configure(selectbackground="#c4c4c4")
-        self.maxtrainlen_ent.configure(selectforeground="black")
-
         self.Mapsize_y = tk.Entry(self.Frame1)
-        self.Mapsize_y.place(relx=0.177, rely=0.325, height=26, relwidth=0.059)
+        self.Mapsize_y.place(relx=0.195, rely=0.325, height=26, relwidth=0.059)
+        self.Mapsize_y.configure(textvariable=IntVar())
         self.Mapsize_y.configure(background="white")
         self.Mapsize_y.configure(disabledforeground="#a3a3a3")
         self.Mapsize_y.configure(font="TkFixedFont")
@@ -518,19 +464,30 @@ class Toplevel1:
         self.Mapsize_y.configure(selectforeground="black")
 
         # initialization
-        self.Initialization_ent = ttk.Combobox(self.Frame1, values=init)
-        self.Initialization_ent.place(relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
-        # self.Initialization_ent.configure(textvariable=one_page_all_support.combobox)
+        self.Initialization_ent = tk.Entry(self.Frame1)
+        self.Initialization_ent.place(
+            relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
+        self.Initialization_ent.configure(textvariable=StringVar())
         self.Initialization_ent.configure(takefocus="")
 
         # normalization
-        self.Normalization_ent = ttk.Combobox(self.Frame1, values=norm)
-        self.Normalization_ent.place(relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
-        # self.Normalization_ent.configure(textvariable=one_page_all_support.combobox)
-        self.Normalization_ent.configure(takefocus="")
+        self.Normalization_ent = tk.Entry(
+            self.Frame1, textvariable=StringVar())
+        self.Normalization_ent.place(
+            relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
+        self.Normalization_ent.configure(background="white")
+        self.Normalization_ent.configure(disabledforeground="#a3a3a3")
+        self.Normalization_ent.configure(font="TkFixedFont")
+        self.Normalization_ent.configure(foreground="#000000")
+        self.Normalization_ent.configure(highlightbackground="#d9d9d9")
+        self.Normalization_ent.configure(highlightcolor="black")
+        self.Normalization_ent.configure(insertbackground="black")
+        self.Normalization_ent.configure(selectbackground="#c4c4c4")
+        self.Normalization_ent.configure(selectforeground="black")
 
         self.Canvas1 = tk.Canvas(self.Frame1)
-        self.Canvas1.place(relx=0.563, rely=0.183,relheight=0.672, relwidth=0.418)
+        self.Canvas1.place(relx=0.563, rely=0.183,
+                           relheight=0.672, relwidth=0.418)
         self.Canvas1.configure(background="#d9d9d9")
         self.Canvas1.configure(borderwidth="2")
         self.Canvas1.configure(highlightbackground="#d9d9d9")
@@ -548,43 +505,26 @@ class Toplevel1:
 
         # the progress bar that indicates the progress of training
         self.TProgressbar1 = ttk.Progressbar(self.Frame1)
-        self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
+        self.TProgressbar1.place(
+            relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
 
         # the button to next vis
         self.Next_vis_btn1 = ttk.Button(self.Frame1)
         self.Next_vis_btn1.place(relx=0.76, rely=0.882, height=35, width=120)
         self.Next_vis_btn1.configure(takefocus="")
         self.Next_vis_btn1.configure(text='''Next''')
-        self.Next_vis_btn1.configure(command=lambda:self.vis())
-
-        # self.Export_vis = ttk.Button(self.Frame1)
-        # self.Export_vis.place(relx=0.854, rely=0.882, height=35, width=120)
-        # self.Export_vis.configure(takefocus="")
-        # self.Export_vis.configure(command=self.export)
-        # self.Export_vis.configure(text='''Export''')
+        # self.Next_vis_btn1.configure(command=lambda: self.vis())
 
         self.Select_Model = ttk.Button(self.Frame1)
         self.Select_Model.place(relx=0.474, rely=0.811, height=35, width=140)
         self.Select_Model.configure(takefocus="")
-        self.Select_Model.configure(command=lambda:self.open_modelfile())
+        self.Select_Model.configure(command=lambda: self.open_modelfile())
         self.Select_Model.configure(text='''Select Model''')
-
-        self.Label1 = tk.Label(self.Frame1)
-        self.Label1.place(relx=0.406, rely=0.801, height=42, width=72)
-        self.Label1.configure(activebackground="#f9f9f9")
-        self.Label1.configure(activeforeground="black")
-        self.Label1.configure(background="#d9d9d9")
-        self.Label1.configure(disabledforeground="#a3a3a3")
-        self.Label1.configure(font="-family {Segoe UI} -size 13 -weight bold")
-        self.Label1.configure(foreground="#000000")
-        self.Label1.configure(highlightbackground="#d9d9d9")
-        self.Label1.configure(highlightcolor="black")
-        self.Label1.configure(text='''or''')
 
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
-        self.vis_gen.configure(command=lambda:self.vis())
+        # self.vis_gen.configure(command=lambda:self.vis())
         self.vis_gen.configure(text='''Gen Vis''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
@@ -593,13 +533,6 @@ class Toplevel1:
         self.Cluster_Inspector.configure(takefocus="")
         # self.Cluster_Inspector.configure(command=self.Cluster_Inspector())
         self.Cluster_Inspector.configure(text='''Cluster Inspector''')
-
-        # find data file button
-        self.Find_File = ttk.Button(self.Frame1)
-        self.Find_File.place(relx=0.109, rely=0.274, height=35, width=120)
-        self.Find_File.configure(takefocus="")
-        self.Find_File.configure(command=lambda:self.open_csvfile())
-        self.Find_File.configure(text='''Select Data''')
 
         # message for short introduction
         self.Message1 = tk.Message(self.Frame1)
@@ -615,7 +548,7 @@ class Toplevel1:
             text='''This is a SOM Tool that trains the input design matrix and output a model and visualizations.''')
         self.Message1.configure(width=478)
 
-        # lattice label 
+        # lattice label
         self.Lattice = tk.Label(self.Frame1)
         self.Lattice.place(relx=0.042, rely=0.507, height=31, width=161)
         self.Lattice.configure(anchor='w')
@@ -624,130 +557,168 @@ class Toplevel1:
         self.Lattice.configure(foreground="#000000")
         self.Lattice.configure(text='''Lattice''')
 
-        # lattice combobox
-        self.Lattice_ent = ttk.Combobox(self.Frame1, values=lattice)
-        self.Lattice_ent.place(relx=0.135, rely=0.507, relheight=0.031, relwidth=0.121)
-        # self.Lattice_ent.configure(textvariable=one_page_all_support.combobox)
-        self.Lattice_ent.configure(takefocus="")
+        # lattice Entry
+        self.Lattice_ent = tk.Entry(self.Frame1, textvariable=StringVar())
+        self.Lattice_ent.place(relx=0.135, rely=0.507,
+                               relheight=0.031, relwidth=0.121)
+        self.Lattice_ent.configure(background="white")
+        self.Lattice_ent.configure(disabledforeground="#a3a3a3")
+        self.Lattice_ent.configure(font="TkFixedFont")
+        self.Lattice_ent.configure(foreground="#000000")
+        self.Lattice_ent.configure(highlightbackground="#d9d9d9")
+        self.Lattice_ent.configure(highlightcolor="black")
+        self.Lattice_ent.configure(insertbackground="black")
+        self.Lattice_ent.configure(selectbackground="#c4c4c4")
+        self.Lattice_ent.configure(selectforeground="black")
 
-    # embedded functions are here
+        self.Cluster = tk.Label(self.Frame1)
+        self.Cluster.place(relx=0.042, rely=0.568, height=31, width=69)
+        self.Cluster.configure(activebackground="#f9f9f9")
+        self.Cluster.configure(activeforeground="black")
+        self.Cluster.configure(anchor='w')
+        self.Cluster.configure(background="#d9d9d9")
+        self.Cluster.configure(disabledforeground="#a3a3a3")
+        self.Cluster.configure(foreground="#000000")
+        self.Cluster.configure(highlightbackground="#d9d9d9")
+        self.Cluster.configure(highlightcolor="black")
+        self.Cluster.configure(text='''Cluster''')
 
+        self.Cluster_ent = tk.Entry(self.Frame1)
+        self.Cluster_ent.place(relx=0.135, rely=0.568,relheight=0.031, relwidth=0.121)
+        self.Cluster_ent.configure(textvariable=IntVar())
+        self.Cluster_ent.configure(background="white")
+        self.Cluster_ent.configure(disabledforeground="#a3a3a3")
+        self.Cluster_ent.configure(font="TkFixedFont")
+        self.Cluster_ent.configure(foreground="#000000")
+        self.Cluster_ent.configure(highlightbackground="#d9d9d9")
+        self.Cluster_ent.configure(highlightcolor="black")
+        self.Cluster_ent.configure(insertbackground="black")
+        self.Cluster_ent.configure(selectbackground="#c4c4c4")
+        self.Cluster_ent.configure(selectforeground="black")
+
+    # embedded functions are here #
     # ask to open csv file (csv file) with index of the first column
+    def print_var(self):
+        print(type(self.n_job_ent.get()))
+        print(type(self.Lattice_ent.get()))
+        print(type(self.shared_memory_ent.get()))
+        print((self.Mapsize_x.get(), self.Mapsize_y.get()))
+        print(type(self.train_len_factor_ent.get()))
+        print(type(self.Mapsize_x.get()))
+
     def open_csvfile(self):
         """
-        open and load csv data 
+        open and load csv data
         """
-        file = askopenfilename(initialdir = "/",title = "Select Data",filetypes =[("csv files","*.csv")]) 
+        file=askopenfilename(initialdir="/", title="Select Data",
+                             filetypes=[("csv files", "*.csv")])
         if file is not None:
-            content = open(file, "rb")
-            df = pd.read_csv(content)
-            ind = df[df.columns[0]]
-            df = df.set_index(ind)
-            return df            
-                
+            content=open(file, "rb")
+            df=pd.read_csv(content)
+            ind=df[df.columns[0]]
+            df=df.set_index(ind)
+            print(df.values)
+            return df
+
     # ask to open model file (general file)
     def open_modelfile(self):
         """
         open and load som model file
         """
-        file = askopenfilename(initialdir = "/",title = "Select file",filetypes =[("All files", "*.*")])
+        file=askopenfilename(initialdir="/", title="Select file", filetypes=[("All files", "*.*")])
         if file is not None:
             # print(content)
             content = open(file, "rb")
             return pickle.load(content)
 
-    def read_comp_names(self):
-        """
-        read component names from the loaded dataset
-        """
-        data = self.open_csvfile()
-        return [name for name in data.columns]
-
-    # training som, export model and print errors
     def sm_training(self):
         """
         Train the model with different parameters.
         """
-        data = self.open_csvfile()
+        file=askopenfilename(initialdir="/", title="Select Data",
+                             filetypes=[("csv files", "*.csv")])
+        content=open(file, "rb")
+        data=pd.read_csv(content)
+        ind=data[data.columns[0]]
+        data=data.set_index(ind)
 
-        # basic parameters for initialization
-        mapsize = (self.Mapsize_x.get(), self.Mapsize_y.get())
-        normalization = self.Normalization_ent.get()
-        initialization = self.Initialization_ent.get()
-        component_names = self.read_comp_names()
-        lattice = self.Lattice_ent.get()
-
-        # parameters for training and tuning
-        n_job = self.n_job_ent.get()
-        shared_memory = self.shared_memory_ent.get()
-        verbose = self.verbose_ent.get()
-        train_rough_len = self.train_ft_len_ent.get()
-        train_rough_radiusin = self.train_rough_rin_ent.get()
-        train_rough_radiusfin = self.train_rough_rfin_ent.get()
-        train_finetune_len = self.train_ft_len_ent.get()
-        train_finetune_radiusin = self.train_ft_rin_ent.get()
-        train_finetune_radiusfin = self.train_ft_rfin_ent.get()
-        train_len_factor = self.train_len_factor_ent.get()
-        maxtrainlen = self.maxtrainlen_ent.get()
+        self.comp_names=[name for name in data.columns]
+        # test cali housing first
+        df=data.head(400).fillna(0).values
 
         # initialize the build
-        sm = SOMFactory().build(data, mapsize, normalization,
-                                initialization, component_names, lattice)
+        sm=SOMFactory().build(
+            data=df,
+            mapsize=(int(self.Mapsize_x.get()), int(self.Mapsize_y.get())),
+            mask=None,
+            mapshape='planar',
+            lattice=self.Lattice_ent.get(),
+            normalization=self.Normalization_ent.get(),
+            initialization=self.Initialization_ent.get(),
+            neighborhood='gaussian',
+            training='batch',
+            name='sompy',
+            component_names=self.comp_names)
+
         # start training
-        sm.train(n_job, shared_memory, verbose, train_rough_len, train_rough_radiusin, train_rough_radiusfin, train_finetune_len,
-                 train_finetune_radiusin, train_finetune_radiusfin, train_len_factor, maxtrainlen)
+        sm.train(n_job=int(self.n_job_ent.get()),
+                shared_memory=self.shared_memory_ent.get(),
+                verbose=self.verbose_ent.get(),
+                train_rough_len=int(self.train_rough_len_ent.get()),
+                train_rough_radiusin=int(self.train_rough_rin_ent.get()),
+                train_rough_radiusfin=int(self.train_rough_rfin_ent.get()),
+                train_finetune_len=int(self.train_ft_len_ent.get()),
+                train_finetune_radiusin=int(self.train_ft_rin_ent.get()),
+                train_finetune_radiusfin=int(self.train_ft_rfin_ent.get()),
+                train_len_factor=int(self.train_len_factor_ent.get()),
+                maxtrainlen=np.Inf)
 
         # errors calculation
-        topographic_error = sm.calculate_topographic_error()
-        quantitization_error = np.mean(sm._bmu[1])
+        topographic_error=sm.calculate_topographic_error()
+        quantitization_error=np.mean(sm._bmu[1])
 
         # if multiple runs are required
-        #joblib.dump(sm, "model_{}.joblib".format(i))
+        # joblib.dump(sm, "model_{}.joblib".format(i))
 
-        # dump the model
-        # dir_name = "Models"
-        # file_name = "sm_model"
-
-        pickle.dump(sm, open("Models/sm_model", "wb"))
+        pickle.dump(sm, open("sm_model", "wb"))
 
         # print errors on the cmd prompt
         print("the topographic error is %s " % topographic_error)
         print("the quantitization error is %s " % quantitization_error)
 
 
-    # generate vis and export to dir_name + filename
     def vis(self):
         """
         generate cluster map visualization
         """
         # the followings are default, we can customize later
-        title = "Cluster"
-        dir_name = "Images/"
-        file_name = "cluster.png"
+        title="Cluster"
+        dir_name="Images/"
+        file_name="cluster.png"
 
-        data = self.open_csvfile()
-        sm = self.open_modelfile()
+        data=self.open_csvfile()
+        sm=self.open_modelfile()
 
-        labels = labels = list(data.index)
-        n_clusters = 5
+        labels=labels=list(data.index)
+        n_clusters=5
 
-        cmap = plt.get_cmap("tab20")
-        n_palette = 20  # number of different colors in this color palette
-        color_list = [cmap((i % n_palette)/n_palette)
+        cmap=plt.get_cmap("tab20")
+        n_palette=20  # number of different colors in this color palette
+        color_list=[cmap((i % n_palette)/n_palette)
                       for i in range(n_clusters)]
-        msz = sm.codebook.mapsize
-        proj = sm.project_data(sm.data_raw)
-        coord = sm.bmu_ind_to_xy(proj)
+        msz=sm.codebook.mapsize
+        proj=sm.project_data(sm.data_raw)
+        coord=sm.bmu_ind_to_xy(proj)
 
-        fig, ax = plt.subplots(1, 1, figsize=(40, 40))
+        fig, ax=plt.subplots(1, 1, figsize=(40, 40))
 
-        #cl_labels = som.cluster(n_clusters)
-        cl_labels = sklearn.cluster.KMeans(
+        # cl_labels = som.cluster(n_clusters)
+        cl_labels=sklearn.cluster.KMeans(
             n_clusters=n_clusters, random_state=555).fit_predict(sm.codebook.matrix)
 
         # fill each rectangular unit area with cluster color
         # and draw line segment to the border of cluster
-        norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
+        norm=mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
 
         # borders
         ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
@@ -777,31 +748,6 @@ class Toplevel1:
 
         # save as png file
         plt.savefig(os.path.join(dir_name, file_name)+".png")
-
-    # cluster inspector
-
-    def cluster_inspector(self):
-        """
-        Input: sm is the som model
-        data is the input data matrix
-        """
-        data = self.open_csvfile()
-        sm = self.open_modelfile()
-
-        # This makes all the loggers stay quiet unless it's important
-        logging.getLogger().setLevel(logging.WARNING)
-
-        cl_labels = ci.kmeans_clust(sm, 5)
-        clusters_list = ci.sort_materials_by_cluster(sm, data, cl_labels)
-
-        # # This makes it so it will display the full lists
-        pd.set_option('display.max_rows', 2000)
-        pd.set_option('display.width', 1000)
-        pd.set_option("display.max_columns", 50)
-
-        # # This should be the last statement of the cell, to make it display
-        # # That, or assign the return value to a variable, and have that variable be the final expression in a cell
-        ci.cluster_tabs(sm, data, clusters_list, cl_labels)
 
 
 if __name__ == '__main__':
