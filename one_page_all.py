@@ -525,8 +525,8 @@ class Toplevel1:
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
-        self.vis_gen.configure(command=lambda:self.cluster_map())
-        self.vis_gen.configure(text='''Cluster Map''')
+        self.vis_gen.configure(command=lambda:self.visualization())
+        self.vis_gen.configure(text='''Visualizations''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
         self.Cluster_Inspector.place(
@@ -690,9 +690,9 @@ class Toplevel1:
         print("the quantitization error is %s " % quantitization_error)
 
     # generate cluster map
-    def cluster_map(self):
+    def visualization(self):
         """
-        generate cluster map visualization
+        generate cluster map, component maps and umat map
         """
         # the followings are default, we can customize later
         title="Cluster"
@@ -759,6 +759,22 @@ class Toplevel1:
 
         # save as png file
         plt.savefig(os.path.join(dir_name, file_name))
+
+        # umat map
+        self.n_clusters=int(self.Cluster_ent.get())
+        umatrixTFP = tfprop_vis.UMatrixTFP(0, 0, '', text_size=14)
+        cmap = plt.get_cmap('RdYlBu_r')  # set color map
+        umat = umatrixTFP.show(self.sm, pd.DataFrame(self.labels),pd.DataFrame(self.labels), "Images/umat.png",show_data=True, labels=False, contooor=True,cmap=cmap,blob = False)
+
+        # component maps
+        htmap_x, htmap_y = (10, 10)
+        viewTFP = tfprop_vis.ViewTFP(htmap_x, htmap_y, '',text_size=10)
+
+        self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
+
+        for i in range(0,len(self.data.columns)):
+            comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
+                        which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
 
     # def umat(self):
     #     self.n_clusters=int(self.Cluster_ent.get())
