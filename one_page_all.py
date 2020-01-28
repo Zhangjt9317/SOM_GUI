@@ -25,6 +25,7 @@ import one_page_all_support
 from tkinter import filedialog as tkFileDialog
 from tkinter.filedialog import askopenfile
 from tkinter.filedialog import askopenfilename
+from tkinter import messagebox
 
 # import sompy / tfprop_sompy related packages
 import math
@@ -60,7 +61,6 @@ warnings.filterwarnings('ignore')
 
 logging.getLogger('matplotlib.font_manager').disabled = True
 
-
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
@@ -72,7 +72,6 @@ def vp_start_gui():
 
 
 w = None
-
 
 def create_Toplevel1(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
@@ -95,8 +94,6 @@ def destroy_Toplevel1():
 init = ["pca", "random"]
 norm = ["var"]
 lattice = ["hexa", "rect"]
-names = ["hello", "hi", "nihao"]
-
 
 class Toplevel1:
     def __init__(self, top=None):
@@ -522,23 +519,18 @@ class Toplevel1:
 
         # initialization
         self.Initialization_ent = ttk.Combobox(self.Frame1, values=init)
-        self.Initialization_ent.place(
-            relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
-        self.Initialization_ent.configure(
-            textvariable=one_page_all_support.combobox)
+        self.Initialization_ent.place(relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
+        # self.Initialization_ent.configure(textvariable=one_page_all_support.combobox)
         self.Initialization_ent.configure(takefocus="")
 
         # normalization
         self.Normalization_ent = ttk.Combobox(self.Frame1, values=norm)
-        self.Normalization_ent.place(
-            relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
-        self.Normalization_ent.configure(
-            textvariable=one_page_all_support.combobox)
+        self.Normalization_ent.place(relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
+        # self.Normalization_ent.configure(textvariable=one_page_all_support.combobox)
         self.Normalization_ent.configure(takefocus="")
 
         self.Canvas1 = tk.Canvas(self.Frame1)
-        self.Canvas1.place(relx=0.563, rely=0.183,
-                           relheight=0.672, relwidth=0.418)
+        self.Canvas1.place(relx=0.563, rely=0.183,relheight=0.672, relwidth=0.418)
         self.Canvas1.configure(background="#d9d9d9")
         self.Canvas1.configure(borderwidth="2")
         self.Canvas1.configure(highlightbackground="#d9d9d9")
@@ -551,19 +543,19 @@ class Toplevel1:
         self.Training = ttk.Button(self.Frame1)
         self.Training.place(relx=0.313, rely=0.811, height=35, width=130)
         self.Training.configure(takefocus="")
-        self.Training.configure(command=self.sm_training())
+        self.Training.configure(command=lambda:self.sm_training())
         self.Training.configure(text='''Train''')
 
         # the progress bar that indicates the progress of training
         self.TProgressbar1 = ttk.Progressbar(self.Frame1)
-        self.TProgressbar1.place(
-            relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
+        self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
 
+        # the button to next vis
         self.Next_vis_btn1 = ttk.Button(self.Frame1)
         self.Next_vis_btn1.place(relx=0.76, rely=0.882, height=35, width=120)
         self.Next_vis_btn1.configure(takefocus="")
         self.Next_vis_btn1.configure(text='''Next''')
-        self.Next_vis_btn1.configure(command=self.vis())
+        self.Next_vis_btn1.configure(command=lambda:self.vis())
 
         # self.Export_vis = ttk.Button(self.Frame1)
         # self.Export_vis.place(relx=0.854, rely=0.882, height=35, width=120)
@@ -574,7 +566,7 @@ class Toplevel1:
         self.Select_Model = ttk.Button(self.Frame1)
         self.Select_Model.place(relx=0.474, rely=0.811, height=35, width=140)
         self.Select_Model.configure(takefocus="")
-        self.Select_Model.configure(command=self.askopensmfile())
+        self.Select_Model.configure(command=lambda:self.open_modelfile())
         self.Select_Model.configure(text='''Select Model''')
 
         self.Label1 = tk.Label(self.Frame1)
@@ -592,30 +584,24 @@ class Toplevel1:
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
-        self.vis_gen.configure(command=self.vis())
+        self.vis_gen.configure(command=lambda:self.vis())
         self.vis_gen.configure(text='''Gen Vis''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
         self.Cluster_Inspector.place(
             relx=0.651, rely=0.882, height=35, width=163)
         self.Cluster_Inspector.configure(takefocus="")
-        self.Cluster_Inspector.configure(command=self.Cluster_Inspector())
+        # self.Cluster_Inspector.configure(command=self.Cluster_Inspector())
         self.Cluster_Inspector.configure(text='''Cluster Inspector''')
 
-        # self.Comp_Name_ent = ttk.Combobox(self.Frame1, values=names)
-        # self.Comp_Name_ent.place(
-        #     relx=0.135, rely=0.507, relheight=0.031, relwidth=0.121)
-        # self.Comp_Name_ent.configure(
-        #     textvariable=one_page_all_support.combobox)
-        # self.Comp_Name_ent.configure(background="#000000")
-        # self.Comp_Name_ent.configure(takefocus="")
-
+        # find data file button
         self.Find_File = ttk.Button(self.Frame1)
         self.Find_File.place(relx=0.109, rely=0.274, height=35, width=120)
         self.Find_File.configure(takefocus="")
-        self.Find_File.configure(command=self.askopencsvfile())
+        self.Find_File.configure(command=lambda:self.open_csvfile())
         self.Find_File.configure(text='''Select Data''')
 
+        # message for short introduction
         self.Message1 = tk.Message(self.Frame1)
         self.Message1.place(relx=0.036, rely=0.639,
                             relheight=0.109, relwidth=0.249)
@@ -629,55 +615,60 @@ class Toplevel1:
             text='''This is a SOM Tool that trains the input design matrix and output a model and visualizations.''')
         self.Message1.configure(width=478)
 
+        # lattice label 
         self.Lattice = tk.Label(self.Frame1)
-        self.Lattice.place(relx=0.042, rely=0.568, height=31, width=147)
+        self.Lattice.place(relx=0.042, rely=0.507, height=31, width=161)
         self.Lattice.configure(anchor='w')
         self.Lattice.configure(background="#d9d9d9")
         self.Lattice.configure(disabledforeground="#a3a3a3")
         self.Lattice.configure(foreground="#000000")
         self.Lattice.configure(text='''Lattice''')
 
+        # lattice combobox
         self.Lattice_ent = ttk.Combobox(self.Frame1, values=lattice)
-        self.Lattice_ent.place(relx=0.135, rely=0.568,
-                               relheight=0.031, relwidth=0.121)
-        self.Lattice_ent.configure(textvariable=one_page_all_support.combobox)
+        self.Lattice_ent.place(relx=0.135, rely=0.507, relheight=0.031, relwidth=0.121)
+        # self.Lattice_ent.configure(textvariable=one_page_all_support.combobox)
         self.Lattice_ent.configure(takefocus="")
 
     # embedded functions are here
 
-    # ask to open file
-    # def askopencsvfile(self):
-    #     return tkFileDialog.askopenfile(initialdir="/", title="Select data file", filetypes=(("csv files", "*.csv"), ("all files", "*.*")))
-
-    def askopensmfile(self):
-        return tkFileDialog.askopenfile(initialdir="/", title="Select model file", filetypes=(("sm files", "*.File"), ("all files", "*.*")))
-
-    # read data
-    # callback1 --> select data
-    def read_data(self):
+    # ask to open csv file (csv file) with index of the first column
+    def open_csvfile(self):
         """
-        input: csv file chosen from the directory
+        open and load csv data 
         """
-        file = tkFileDialog.askopenfile(mode ='r', filetypes =[('csv Files', '*.csv')]) 
+        file = askopenfilename(initialdir = "/",title = "Select Data",filetypes =[("csv files","*.csv")]) 
         if file is not None:
-            content = pd.read_csv(file)
-            return content
-        else:
-            assert("Input Error, Select Again")
+            content = open(file, "rb")
+            df = pd.read_csv(content)
+            ind = df[df.columns[0]]
+            df = df.set_index(ind)
+            return df            
+                
+    # ask to open model file (general file)
+    def open_modelfile(self):
+        """
+        open and load som model file
+        """
+        file = askopenfilename(initialdir = "/",title = "Select file",filetypes =[("All files", "*.*")])
+        if file is not None:
+            # print(content)
+            content = open(file, "rb")
+            return pickle.load(content)
 
     def read_comp_names(self):
         """
-        Input: nxm data matrix
+        read component names from the loaded dataset
         """
-        data = self.read_data()
-        return [names for name in data.columns]
+        data = self.open_csvfile()
+        return [name for name in data.columns]
 
     # training som, export model and print errors
     def sm_training(self):
         """
         Train the model with different parameters.
         """
-        data = self.read_data()
+        data = self.open_csvfile()
 
         # basic parameters for initialization
         mapsize = (self.Mapsize_x.get(), self.Mapsize_y.get())
@@ -723,16 +714,6 @@ class Toplevel1:
         print("the topographic error is %s " % topographic_error)
         print("the quantitization error is %s " % quantitization_error)
 
-    # select model from the chosen file
-    # callback 2 --> select trained model
-    def select_model(self):
-        """
-        The file should be the trained sm model in the directory
-        This operation 
-        """
-        file = askopenfilename(initialdir = "/",title = "Select file",filetypes =[("All files", "*.*")]) 
-        if file is not None:
-            return pickle.load(open(file, "rb"))
 
     # generate vis and export to dir_name + filename
     def vis(self):
@@ -744,8 +725,8 @@ class Toplevel1:
         dir_name = "Images/"
         file_name = "cluster.png"
 
-        data = self.read_data()
-        sm = self.select_model()
+        data = self.open_csvfile()
+        sm = self.open_modelfile()
 
         labels = labels = list(data.index)
         n_clusters = 5
@@ -804,8 +785,8 @@ class Toplevel1:
         Input: sm is the som model
         data is the input data matrix
         """
-        data = self.read_data()
-        sm = self.select_model()
+        data = self.open_csvfile()
+        sm = self.open_modelfile()
 
         # This makes all the loggers stay quiet unless it's important
         logging.getLogger().setLevel(logging.WARNING)
