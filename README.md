@@ -10,19 +10,20 @@ In this GUI we are going to embed the SOM workflow inside GUI to make it easier 
 1. Training
    * Choose the mapsize and SOMFactory build hyperparameters, including:
 
-    | SOMFactory    | sm.train                 |
-    | ------------- | -------------            |
-    | value         | n_job = 1                |
-    | mapsize       | shared_memory = False    |
-    | normalization | verbose = "info"         |
-    | initialization| train_rough_len          |
-    | component_name| train_rough_radiusin     |
-    | lattice       | train_rough_radiusfin    |
-    |               | train_finetune_len       |
-    |               | train_finetune_radiusin  |
-    |               | train_finetune_radiusfin |
-    |               | train_len_factor = 1     |
-    |               | maxtrainlen = inf        |
+    | SOMFactory           | sm.train                 |
+    | -------------------- | ------------------------ |
+    | data                 | n_job = 1                |
+    | mapsize=None         | shared_memory = False    |
+    | normalizer=None      | verbose = "info"         |
+    | initialization='pca' | train_rough_len          |
+    | lattice='rect'       | train_rough_radiusin     |
+    | neighborhood         | train_rough_radiusfin    |
+    | mask=None            | train_finetune_len       |
+    | mapshape='planar'    | train_finetune_radiusin  |
+    | training='batch'     | train_finetune_radiusfin |
+    | name='sompy'         | train_len_factor = 1     |
+    | component_names=None | maxtrainlen = inf        |
+
 
 2. Visualization
    * Heatmaps

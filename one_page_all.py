@@ -103,6 +103,8 @@ class Toplevel1:
         _compcolor = '#d9d9d9'  # X11 color: 'gray85'
         _ana1color = '#d9d9d9'  # X11 color: 'gray85'
         _ana2color = '#ececec'  # Closest X11 color: 'gray92'
+        font9 = "-family Arial -size 10 -weight bold -slant roman "  \
+        "-underline 0 -overstrike 0"
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')
@@ -146,6 +148,19 @@ class Toplevel1:
         self.Title.configure(highlightcolor="black")
         self.Title.configure(text='''SOM Trainer''')
 
+        # label for introduction
+        self.Intro = tk.Label(self.Frame1)
+        self.Intro.place(relx=0.042, rely=0.233, height=31, width=300)
+        self.Intro.configure(anchor='w')
+        self.Intro.configure(activeforeground="#000000")
+        self.Intro.configure(background="#d9d9d9")
+        self.Intro.configure(disabledforeground="#a3a3a3")
+        self.Intro.configure(font=font9)
+        self.Intro.configure(foreground="#000000")
+        self.Intro.configure(text='''Input Hyperparameters for SOM Training''')
+
+
+        # Mapsize label
         self.Mapsize = tk.Label(self.Frame1)
         self.Mapsize.place(relx=0.042, rely=0.325, height=31, width=71)
         self.Mapsize.configure(activebackground="#f9f9f9")
@@ -157,6 +172,34 @@ class Toplevel1:
         self.Mapsize.configure(highlightbackground="#d9d9d9")
         self.Mapsize.configure(highlightcolor="black")
         self.Mapsize.configure(text='''Mapsize''')
+
+        # Mapsize X
+        self.Mapsize_x = tk.Entry(self.Frame1)
+        self.Mapsize_x.place(relx=0.135, rely=0.325, height=26, relwidth=0.054)
+        self.Mapsize_x.configure(textvariable=IntVar())
+        self.Mapsize_x.configure(background="white")
+        self.Mapsize_x.configure(disabledforeground="#a3a3a3")
+        self.Mapsize_x.configure(font="TkFixedFont")
+        self.Mapsize_x.configure(foreground="#000000")
+        self.Mapsize_x.configure(highlightbackground="#d9d9d9")
+        self.Mapsize_x.configure(highlightcolor="black")
+        self.Mapsize_x.configure(insertbackground="black")
+        self.Mapsize_x.configure(selectbackground="#c4c4c4")
+        self.Mapsize_x.configure(selectforeground="black")
+
+        # Mapsize Y
+        self.Mapsize_y = tk.Entry(self.Frame1)
+        self.Mapsize_y.place(relx=0.195, rely=0.325, height=26, relwidth=0.059)
+        self.Mapsize_y.configure(textvariable=IntVar())
+        self.Mapsize_y.configure(background="white")
+        self.Mapsize_y.configure(disabledforeground="#a3a3a3")
+        self.Mapsize_y.configure(font="TkFixedFont")
+        self.Mapsize_y.configure(foreground="#000000")
+        self.Mapsize_y.configure(highlightbackground="#d9d9d9")
+        self.Mapsize_y.configure(highlightcolor="black")
+        self.Mapsize_y.configure(insertbackground="black")
+        self.Mapsize_y.configure(selectbackground="#c4c4c4")
+        self.Mapsize_y.configure(selectforeground="black")
 
         self.Normalization = tk.Label(self.Frame1)
         self.Normalization.place(relx=0.042, rely=0.385, height=31, width=117)
@@ -182,18 +225,6 @@ class Toplevel1:
         self.Initialization.configure(highlightcolor="black")
         self.Initialization.configure(text='''Initialization''')
 
-        self.Mapsize_x = tk.Entry(self.Frame1)
-        self.Mapsize_x.place(relx=0.135, rely=0.325, height=26, relwidth=0.054)
-        self.Mapsize_x.configure(textvariable=IntVar())
-        self.Mapsize_x.configure(background="white")
-        self.Mapsize_x.configure(disabledforeground="#a3a3a3")
-        self.Mapsize_x.configure(font="TkFixedFont")
-        self.Mapsize_x.configure(foreground="#000000")
-        self.Mapsize_x.configure(highlightbackground="#d9d9d9")
-        self.Mapsize_x.configure(highlightcolor="black")
-        self.Mapsize_x.configure(insertbackground="black")
-        self.Mapsize_x.configure(selectbackground="#c4c4c4")
-        self.Mapsize_x.configure(selectforeground="black")
 
         self.train_ft_rin = tk.Label(self.Frame1)
         self.train_ft_rin.place(relx=0.313, rely=0.588, height=31, width=181)
@@ -269,6 +300,7 @@ class Toplevel1:
         self.train_ft_len.configure(highlightcolor="black")
         self.train_ft_len.configure(text='''train_finetune_len''')
 
+        # n_job label
         self.n_job = tk.Label(self.Frame1)
         self.n_job.place(relx=0.313, rely=0.233, height=31, width=49)
         self.n_job.configure(activebackground="#f9f9f9")
@@ -332,7 +364,7 @@ class Toplevel1:
         self.n_job_ent.configure(selectforeground="black")
 
         self.shared_memory_ent = tk.Entry(
-            self.Frame1, textvariable=StringVar())
+            self.Frame1, textvariable=self.v)
         self.shared_memory_ent.place(
             relx=0.422, rely=0.284, height=26, relwidth=0.127)
         self.shared_memory_ent.configure(background="white")
@@ -345,7 +377,7 @@ class Toplevel1:
         self.shared_memory_ent.configure(selectbackground="#c4c4c4")
         self.shared_memory_ent.configure(selectforeground="black")
 
-        self.verbose_ent = tk.Entry(self.Frame1, textvariable=StringVar())
+        self.verbose_ent = tk.Entry(self.Frame1, textvariable=self.v)
         self.verbose_ent.place(relx=0.422, rely=0.335,
                                height=26, relwidth=0.127)
         self.verbose_ent.configure(background="white")
@@ -451,31 +483,15 @@ class Toplevel1:
         self.train_len_factor_ent.configure(selectbackground="#c4c4c4")
         self.train_len_factor_ent.configure(selectforeground="black")
 
-        self.Mapsize_y = tk.Entry(self.Frame1)
-        self.Mapsize_y.place(relx=0.195, rely=0.325, height=26, relwidth=0.059)
-        self.Mapsize_y.configure(textvariable=IntVar())
-        self.Mapsize_y.configure(background="white")
-        self.Mapsize_y.configure(disabledforeground="#a3a3a3")
-        self.Mapsize_y.configure(font="TkFixedFont")
-        self.Mapsize_y.configure(foreground="#000000")
-        self.Mapsize_y.configure(highlightbackground="#d9d9d9")
-        self.Mapsize_y.configure(highlightcolor="black")
-        self.Mapsize_y.configure(insertbackground="black")
-        self.Mapsize_y.configure(selectbackground="#c4c4c4")
-        self.Mapsize_y.configure(selectforeground="black")
-
         # initialization
         self.Initialization_ent = tk.Entry(self.Frame1)
-        self.Initialization_ent.place(
-            relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
+        self.Initialization_ent.place(relx=0.135, rely=0.446, relheight=0.031, relwidth=0.121)
         self.Initialization_ent.configure(textvariable=StringVar())
         self.Initialization_ent.configure(takefocus="")
 
         # normalization
-        self.Normalization_ent = tk.Entry(
-            self.Frame1, textvariable=StringVar())
-        self.Normalization_ent.place(
-            relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
+        self.Normalization_ent = tk.Entry(self.Frame1, textvariable=StringVar())
+        self.Normalization_ent.place(relx=0.135, rely=0.385, relheight=0.031, relwidth=0.121)
         self.Normalization_ent.configure(background="white")
         self.Normalization_ent.configure(disabledforeground="#a3a3a3")
         self.Normalization_ent.configure(font="TkFixedFont")
@@ -486,18 +502,29 @@ class Toplevel1:
         self.Normalization_ent.configure(selectbackground="#c4c4c4")
         self.Normalization_ent.configure(selectforeground="black")
 
-        self.Canvas1 = tk.Canvas(self.Frame1)
-        self.Canvas1.place(relx=0.563, rely=0.183,
-                           relheight=0.672, relwidth=0.418)
-        self.Canvas1.configure(background="#d9d9d9")
-        self.Canvas1.configure(borderwidth="2")
-        self.Canvas1.configure(highlightbackground="#d9d9d9")
-        self.Canvas1.configure(highlightcolor="black")
-        self.Canvas1.configure(insertbackground="black")
-        self.Canvas1.configure(relief="ridge")
-        self.Canvas1.configure(selectbackground="#c4c4c4")
-        self.Canvas1.configure(selectforeground="black")
+        self.Instruction = tk.Message(self.Frame1)
+        self.Instruction.place(relx=0.563, rely=0.183,relheight=0.672, relwidth=0.418)
+        self.Instruction.configure(background="#d9d9d9")
+        self.Instruction.configure(borderwidth="2")
+        self.Instruction.configure(highlightbackground="#d9d9d9")
+        self.Instruction.configure(highlightcolor="black")
+        # self.Instruction.configure(insertbackground="black")
+        self.Instruction.configure(relief="ridge")
+        # self.Instruction.configure(selectbackground="#c4c4c4")
+        # self.Instruction.configure(selectforeground="black")
+        self.Instruction.configure(font=font9)
+        self.Instruction.configure(text='''
+        The followings are instruction to perform this model: \n
+            1. A preprocessed dataset needs to be selected \n
+            2. Input training hyperparameters for SOM model \n
+            3. Input cluster number and select 'visuaization' button to select both data and trained model \n
+            4. View and save visualizations to local for analysis \n
+        \n
+        
+        Please read about SOMPY for more details about SOM training. For your personal use, you can customize the SOMPY package and add more functions to it.
+        ''')
 
+        # Training button to select dataset and train the model
         self.Training = ttk.Button(self.Frame1)
         self.Training.place(relx=0.313, rely=0.811, height=35, width=130)
         self.Training.configure(takefocus="")
@@ -506,21 +533,7 @@ class Toplevel1:
 
         # the progress bar that indicates the progress of training
         self.TProgressbar1 = ttk.Progressbar(self.Frame1)
-        self.TProgressbar1.place(
-            relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
-
-        # the button to next vis
-        self.Next_vis_btn1 = ttk.Button(self.Frame1)
-        self.Next_vis_btn1.place(relx=0.76, rely=0.882, height=35, width=120)
-        self.Next_vis_btn1.configure(takefocus="")
-        self.Next_vis_btn1.configure(text='''Umat Map''')
-        # self.Next_vis_btn1.configure(command=lambda: self.umat())
-
-        # self.Select_Model = ttk.Button(self.Frame1)
-        # self.Select_Model.place(relx=0.474, rely=0.811, height=35, width=140)
-        # self.Select_Model.configure(takefocus="")
-        # self.Select_Model.configure(command=lambda: self.open_modelfile())
-        # self.Select_Model.configure(text='''Select Model''')
+        self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
 
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
@@ -529,25 +542,10 @@ class Toplevel1:
         self.vis_gen.configure(text='''Visualizations''')
 
         self.Cluster_Inspector = ttk.Button(self.Frame1)
-        self.Cluster_Inspector.place(
-            relx=0.651, rely=0.882, height=35, width=163)
+        self.Cluster_Inspector.place(relx=0.651, rely=0.882, height=35, width=163)
         self.Cluster_Inspector.configure(takefocus="")
-        # self.Cluster_Inspector.configure(command=self.heatmap())
-        self.Cluster_Inspector.configure(text='''Component Maps''')
-
-        # message for short introduction
-        self.Message1 = tk.Message(self.Frame1)
-        self.Message1.place(relx=0.036, rely=0.639,
-                            relheight=0.109, relwidth=0.249)
-        self.Message1.configure(anchor='nw')
-        self.Message1.configure(background="#d9d9d9")
-        self.Message1.configure(font="-family {Segoe UI} -size 11")
-        self.Message1.configure(foreground="#000000")
-        self.Message1.configure(highlightbackground="#d9d9d9")
-        self.Message1.configure(highlightcolor="black")
-        self.Message1.configure(
-            text='''This is a SOM Tool that trains the input design matrix and output a model and visualizations.''')
-        self.Message1.configure(width=478)
+        # self.Cluster_Inspector.configure(command=self.cluster_inspector())
+        self.Cluster_Inspector.configure(text='''Cluster Inspector''')
 
         # lattice label
         self.Lattice = tk.Label(self.Frame1)
@@ -560,8 +558,7 @@ class Toplevel1:
 
         # lattice Entry
         self.Lattice_ent = tk.Entry(self.Frame1, textvariable=StringVar())
-        self.Lattice_ent.place(relx=0.135, rely=0.507,
-                               relheight=0.031, relwidth=0.121)
+        self.Lattice_ent.place(relx=0.135, rely=0.507,relheight=0.031, relwidth=0.121)
         self.Lattice_ent.configure(background="white")
         self.Lattice_ent.configure(disabledforeground="#a3a3a3")
         self.Lattice_ent.configure(font="TkFixedFont")
@@ -572,8 +569,90 @@ class Toplevel1:
         self.Lattice_ent.configure(selectbackground="#c4c4c4")
         self.Lattice_ent.configure(selectforeground="black")
 
+        # Mapshape Label
+        self.Mapshape = tk.Label(self.Frame1)
+        self.Mapshape.place(relx=0.042, rely=0.629,height=31, width=69)
+        self.Mapshape.configure(activebackground="#f9f9f9")
+        self.Mapshape.configure(activeforeground="black")
+        self.Mapshape.configure(anchor='w')
+        self.Mapshape.configure(background="#d9d9d9")
+        self.Mapshape.configure(disabledforeground="#a3a3a3")
+        self.Mapshape.configure(foreground="#000000")
+        self.Mapshape.configure(highlightbackground="#d9d9d9")
+        self.Mapshape.configure(highlightcolor="black")
+        self.Mapshape.configure(text='''Mapshape''')
+
+        # Mapshape Entry
+        self.Mapshape_ent = tk.Entry(self.Frame1)
+        self.Mapshape_ent.place(relx=0.135, rely=0.629,relheight=0.031, relwidth=0.121)
+        self.Mapshape_ent.configure(textvariable=StringVar())
+        self.Mapshape_ent.configure(background="white")
+        self.Mapshape_ent.configure(disabledforeground="#a3a3a3")
+        self.Mapshape_ent.configure(font="TkFixedFont")
+        self.Mapshape_ent.configure(foreground="#000000")
+        self.Mapshape_ent.configure(highlightbackground="#d9d9d9")
+        self.Mapshape_ent.configure(highlightcolor="black")
+        self.Mapshape_ent.configure(insertbackground="black")
+        self.Mapshape_ent.configure(selectbackground="#c4c4c4")
+        self.Mapshape_ent.configure(selectforeground="black")
+
+        # Mask Label
+        self.Mask = tk.Label(self.Frame1)
+        self.Mask.place(relx=0.042, rely=0.69,height=31, width=69)
+        self.Mask.configure(activebackground="#f9f9f9")
+        self.Mask.configure(activeforeground="black")
+        self.Mask.configure(anchor='w')
+        self.Mask.configure(background="#d9d9d9")
+        self.Mask.configure(disabledforeground="#a3a3a3")
+        self.Mask.configure(foreground="#000000")
+        self.Mask.configure(highlightbackground="#d9d9d9")
+        self.Mask.configure(highlightcolor="black")
+        self.Mask.configure(text='''Mask''')
+
+        # Mask Entry
+        self.Mask_ent = tk.Entry(self.Frame1)
+        self.Mask_ent.place(relx=0.135, rely=0.69,relheight=0.031, relwidth=0.121)
+        self.Mask_ent.configure(textvariable=StringVar())
+        self.Mask_ent.configure(background="white")
+        self.Mask_ent.configure(disabledforeground="#a3a3a3")
+        self.Mask_ent.configure(font="TkFixedFont")
+        self.Mask_ent.configure(foreground="#000000")
+        self.Mask_ent.configure(highlightbackground="#d9d9d9")
+        self.Mask_ent.configure(highlightcolor="black")
+        self.Mask_ent.configure(insertbackground="black")
+        self.Mask_ent.configure(selectbackground="#c4c4c4")
+        self.Mask_ent.configure(selectforeground="black")
+
+        # Training Label
+        self.training = tk.Label(self.Frame1)
+        self.training.place(relx=0.042, rely=0.751,height=31, width=69)
+        self.training.configure(activebackground="#f9f9f9")
+        self.training.configure(activeforeground="black")
+        self.training.configure(anchor='w')
+        self.training.configure(background="#d9d9d9")
+        self.training.configure(disabledforeground="#a3a3a3")
+        self.training.configure(foreground="#000000")
+        self.training.configure(highlightbackground="#d9d9d9")
+        self.training.configure(highlightcolor="black")
+        self.training.configure(text='''Training''')
+
+        # Training Entry
+        self.training_ent = tk.Entry(self.Frame1)
+        self.training_ent.place(relx=0.135, rely=0.751,relheight=0.031, relwidth=0.121)
+        self.training_ent.configure(textvariable=StringVar())
+        self.training_ent.configure(background="white")
+        self.training_ent.configure(disabledforeground="#a3a3a3")
+        self.training_ent.configure(font="TkFixedFont")
+        self.training_ent.configure(foreground="#000000")
+        self.training_ent.configure(highlightbackground="#d9d9d9")
+        self.training_ent.configure(highlightcolor="black")
+        self.training_ent.configure(insertbackground="black")
+        self.training_ent.configure(selectbackground="#c4c4c4")
+        self.training_ent.configure(selectforeground="black")
+
+        # cluster label
         self.Cluster = tk.Label(self.Frame1)
-        self.Cluster.place(relx=0.042, rely=0.568, height=31, width=69)
+        self.Cluster.place(relx=0.313, rely=0.751, height=31, width=69)
         self.Cluster.configure(activebackground="#f9f9f9")
         self.Cluster.configure(activeforeground="black")
         self.Cluster.configure(anchor='w')
@@ -584,8 +663,9 @@ class Toplevel1:
         self.Cluster.configure(highlightcolor="black")
         self.Cluster.configure(text='''Cluster''')
 
+        # cluster entry
         self.Cluster_ent = tk.Entry(self.Frame1)
-        self.Cluster_ent.place(relx=0.135, rely=0.568,relheight=0.031, relwidth=0.121)
+        self.Cluster_ent.place(relx=0.422, rely=0.751, height=26, relwidth=0.127)
         self.Cluster_ent.configure(textvariable=IntVar())
         self.Cluster_ent.configure(background="white")
         self.Cluster_ent.configure(disabledforeground="#a3a3a3")
@@ -596,6 +676,8 @@ class Toplevel1:
         self.Cluster_ent.configure(insertbackground="black")
         self.Cluster_ent.configure(selectbackground="#c4c4c4")
         self.Cluster_ent.configure(selectforeground="black")
+
+
 
     # embedded functions are here #
     # ask to open csv file (csv file) with index of the first column
@@ -696,8 +778,6 @@ class Toplevel1:
         """
         # the followings are default, we can customize later
         title="Cluster"
-        dir_name="Images/"
-        file_name="cluster.png"
 
         file_d=askopenfilename(initialdir=dir_name, title="Select Data", filetypes=[("csv files", "*.csv")])
         content1=open(file_d, "rb")
@@ -756,9 +836,9 @@ class Toplevel1:
         #             rotation=30, fontsize=15, weight='semibold')
 
         plt.title(title)
-
+        
         # save as png file
-        plt.savefig(os.path.join(dir_name, file_name))
+        plt.savefig("Images/Cluster.png")
 
         # umat map
         self.n_clusters=int(self.Cluster_ent.get())
@@ -772,9 +852,9 @@ class Toplevel1:
 
         self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
 
-        # for i in range(0,len(self.data.columns)):
-        comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
-            which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
+        for i in range(0,len(self.data.columns)):
+            comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
+                which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
 
    
     def clusteringmap_category(self):
@@ -842,9 +922,9 @@ class Toplevel1:
             # wrap of label for chemical compound
             #label = str_wrap(label)
 
-    #         ax.text(x+0.3, y+0.3, label,
-    #                 horizontalalignment='left', verticalalignment='bottom',
-    #                 rotation=30, fontsize=12, weight='semibold')
+            #ax.text(x+0.3, y+0.3, label,
+                    #  horizontalalignment='left', verticalalignment='bottom',
+                    #  rotation=30, fontsize=12, weight='semibold')
             #cl_labels = som.cluster(n_clusters)
         cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, 
                                         random_state = 555).fit_predict(self.sm.codebook.matrix)
@@ -869,6 +949,22 @@ class Toplevel1:
         plt.title(colorcategory,fontsize = 50)
         return cl_labels
 
+
+    # def cluster_inspector(self):
+    #     # This makes all the loggers stay quiet unless it's important
+    #     logging.getLogger().setLevel(logging.WARNING)
+
+    #     cl_labels = ci.kmeans_clust(sm, 5)
+    #     clusters_list = ci.sort_materials_by_cluster(sm,X_train_cluster,cl_labels)
+
+    #     # # This makes it so it will display the full lists
+    #     pd.set_option('display.max_rows', 2000)
+    #     pd.set_option('display.width', 1000)
+    #     pd.set_option("display.max_columns",50)
+
+    #     # # This should be the last statement of the cell, to make it display
+    #     # # That, or assign the return value to a variable, and have that variable be the final expression in a cell
+    #     ci.cluster_tabs(sm, X_train_cluster, clusters_list, cl_labels)
 
 if __name__ == '__main__':
     vp_start_gui()
