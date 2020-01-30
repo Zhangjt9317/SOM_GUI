@@ -772,103 +772,102 @@ class Toplevel1:
 
         self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
 
-        for i in range(0,len(self.data.columns)):
-            comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
-                        which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
+        # for i in range(0,len(self.data.columns)):
+        comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
+            which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
 
    
-    # def clusteringmap_category(self):
-    #     # sm,labels,n_clusters,dataset,colorcategory,savepath
+    def clusteringmap_category(self):
         
-    #     savepath = "Images/"
-    #     dataset = self.data
-    #     labels = self.data.index
-    #     n_clusters = self.n_clusters
-    #     colorcategory = "?" # needs to be one thing in the dataset, it can be outside of data
+        savepath = "Images/"
+        dataset = self.data
+        labels = self.data.index
+        n_clusters = self.n_clusters
+        colorcategory = "?" # needs to be one thing in the dataset, it can be outside of data
 
-    #     categories = self.data[colorcategory] #if colorcategory is one col of the dataset
-    #     cmap = plt.get_cmap("tab20") #cmap for background
-    #     n_palette = 20  # number of different colors in this color palette
-    #     color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
-    #     msz = self.sm.codebook.mapsize
-    #     proj = self.sm.project_data(self.sm.data_raw)
-    #     coord = self.sm.bmu_ind_to_xy(proj)
-    #     cl_labels = self.cl_labels
+        categories = self.data[colorcategory] #if colorcategory is one col of the dataset
+        cmap = plt.get_cmap("tab20") #cmap for background
+        n_palette = 20  # number of different colors in this color palette
+        color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
+        msz = self.sm.codebook.mapsize
+        proj = self.sm.project_data(self.sm.data_raw)
+        coord = self.sm.bmu_ind_to_xy(proj)
+        cl_labels = self.cl_labels
 
-    #     fig, ax = plt.subplots(1, 1, figsize=(30,30))
+        fig, ax = plt.subplots(1, 1, figsize=(30,30))
 
-    #     # fill each rectangular unit area with cluster color
-    #     #  and draw line segment to the border of cluster
-    #     norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
-    #     ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
-    #                 cmap=cmap, norm=norm, edgecolors='face',
-    #                 lw=0.5, alpha=0.5)
+        # fill each rectangular unit area with cluster color
+        #  and draw line segment to the border of cluster
+        norm = mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
+        ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
+                    cmap=cmap, norm=norm, edgecolors='face',
+                    lw=0.5, alpha=0.5)
 
-    #     ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
-    #     ax.axis('off')
+        ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
+        ax.axis('off')
 
-    #     categoryname = list(dataset.groupby(colorcategory).count().index)
-    #     categories_int = categories.apply(categoryname.index)
+        categoryname = list(dataset.groupby(colorcategory).count().index)
+        categories_int = categories.apply(categoryname.index)
 
-    #     N = len(categoryname)
-    #     cmap_labels = plt.cm.gist_ncar
-    #     # extract all colors from the .jet map
-    #     cmaplist = [cmap_labels(i) for i in range(cmap_labels.N)]
-    #     # create the new map
-    #     cmap_labels = cmap_labels.from_list('Custom cmap', cmaplist, cmap_labels.N)
-    #     # define the bins and normalize
-    #     bounds = np.linspace(0,N,N+1)
-    #     norm_labels = mpl.colors.BoundaryNorm(bounds, cmap_labels.N)
+        N = len(categoryname)
+        cmap_labels = plt.cm.gist_ncar
+        # extract all colors from the .jet map
+        cmaplist = [cmap_labels(i) for i in range(cmap_labels.N)]
+        # create the new map
+        cmap_labels = cmap_labels.from_list('Custom cmap', cmaplist, cmap_labels.N)
+        # define the bins and normalize
+        bounds = np.linspace(0,N,N+1)
+        norm_labels = mpl.colors.BoundaryNorm(bounds, cmap_labels.N)
 
-    #     scat = ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c=categories_int,s=300,cmap=cmap_labels,norm=norm_labels)
-    #     cbar = plt.colorbar(scat, spacing='proportional',ticks=bounds)
-    #     cbar.ax.get_yaxis().set_ticks([])
+        scat = ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c=categories_int,s=300,cmap=cmap_labels,norm=norm_labels)
+        cbar = plt.colorbar(scat, spacing='proportional',ticks=bounds)
+        cbar.ax.get_yaxis().set_ticks([])
         
-    #     for j, lab in enumerate(categoryname):
-    #         cbar.ax.text(1, (2 * j + 1) / (2*(len(categoryname))), lab, ha='left', va='center', fontsize=30)
-    #     cbar.ax.get_yaxis().labelpad = 15
-    #     #cbar.ax.set_ylabel('# of contacts', rotation=270)
-    #     ax.axis('off')
+        for j, lab in enumerate(categoryname):
+            cbar.ax.text(1, (2 * j + 1) / (2*(len(categoryname))), lab, ha='left', va='center', fontsize=30)
+        cbar.ax.get_yaxis().labelpad = 15
+        #cbar.ax.set_ylabel('# of contacts', rotation=270)
+        ax.axis('off')
 
-    #     for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
-    #         x += 0.2
-    #         y += 0.2
-    #         # "+ 0.1" means shift of label location to upperright direction
+        for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
+            x += 0.2
+            y += 0.2
+            # "+ 0.1" means shift of label location to upperright direction
 
-    #         # randomize the location of the label
-    #         #   not to be overwrapped with each other
-    #         # x_text += 0.1 * np.random.randn()
-    #         y += 0.3 * np.random.randn()
+            # randomize the location of the label
+            #   not to be overwrapped with each other
+            # x_text += 0.1 * np.random.randn()
+            y += 0.3 * np.random.randn()
 
-    #         # wrap of label for chemical compound
-    #         #label = str_wrap(label)
+            # wrap of label for chemical compound
+            #label = str_wrap(label)
 
-    # #         ax.text(x+0.3, y+0.3, label,
-    # #                 horizontalalignment='left', verticalalignment='bottom',
-    # #                 rotation=30, fontsize=12, weight='semibold')
-    #         #cl_labels = som.cluster(n_clusters)
-    #     cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, 
-    #                                     random_state = 555).fit_predict(self.sm.codebook.matrix)
+    #         ax.text(x+0.3, y+0.3, label,
+    #                 horizontalalignment='left', verticalalignment='bottom',
+    #                 rotation=30, fontsize=12, weight='semibold')
+            #cl_labels = som.cluster(n_clusters)
+        cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, 
+                                        random_state = 555).fit_predict(self.sm.codebook.matrix)
 
-    #     for i in range(len(cl_labels)):
-    #         rect_x = [i // msz[1], i // msz[1],
-    #                 i // msz[1] + 1, i // msz[1] + 1]
-    #         rect_y = [i % msz[1], i % msz[1] + 1,
-    #                 i % msz[1] + 1, i % msz[1]]
+        for i in range(len(cl_labels)):
+            rect_x = [i // msz[1], i // msz[1],
+                    i // msz[1] + 1, i // msz[1] + 1]
+            rect_y = [i % msz[1], i % msz[1] + 1,
+                    i % msz[1] + 1, i % msz[1]]
 
-    #         if i % msz[1] + 1 < msz[1]:  # top border
-    #             if cl_labels[i] != cl_labels[i+1]:
-    #                 ax.plot([rect_x[1], rect_x[2]],
-    #                         [rect_y[1], rect_y[2]], 'k-', lw=2.5)
+            if i % msz[1] + 1 < msz[1]:  # top border
+                if cl_labels[i] != cl_labels[i+1]:
+                    ax.plot([rect_x[1], rect_x[2]],
+                            [rect_y[1], rect_y[2]], 'k-', lw=2.5)
 
-    #         if i + msz[1] < len(cl_labels):  # right border
-    #             if cl_labels[i] != cl_labels[i+msz[1]]:
-    #                 ax.plot([rect_x[2], rect_x[3]],
-    #                         [rect_y[2], rect_y[3]], 'k-', lw=2.5)
+            if i + msz[1] < len(cl_labels):  # right border
+                if cl_labels[i] != cl_labels[i+msz[1]]:
+                    ax.plot([rect_x[2], rect_x[3]],
+                            [rect_y[2], rect_y[3]], 'k-', lw=2.5)
         
-    #     plt.savefig(savepath)
-    #     plt.title(colorcategory,fontsize = 50)
-    #     return cl_labels
+        plt.savefig(savepath)
+        plt.title(colorcategory,fontsize = 50)
+        return cl_labels
 
 
 if __name__ == '__main__':
