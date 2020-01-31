@@ -63,3 +63,13 @@ For some reason jupyter does not start successfully based on the current environ
 
 
 The training phase and visualization phase are separated. After training the model we can select any of them (if you trained multiple) and generate visualization based on them.
+
+##### 1/30/2020
+
+All functions work normally, I need to tune the functions for job sequence. But all functions are successfully embedded. I am not sure if tuning radius can be supported in Tim's code since I have not looked at it yet. The following is the current workflow
+
+1. input training hyperparameters 
+2. click "Training" to select dataset
+3. click "visualizations" to select both dataset and trained model to generate component list in the listbox and visualization maps.
+4. In this case we have to generate all the way to heatmaps and close the pop up window to select component property user wants to project on the cluster map. (It is stupid, I know)
+5. generate the projection map --> min-max scaling is required for numerical values in a certain range, categorical values can be used directly.
