@@ -95,7 +95,8 @@ def destroy_Toplevel1():
 
 
 class Toplevel1:
-    def __init__(self, top=None):
+    def __init__(self, top=None, initialdir='', filetypes=()):
+        
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -503,7 +504,7 @@ class Toplevel1:
         self.Normalization_ent.configure(selectforeground="black")
 
         self.Instruction = tk.Message(self.Frame1)
-        self.Instruction.place(relx=0.563, rely=0.183,relheight=0.672, relwidth=0.418)
+        self.Instruction.place(relx=0.563, rely=0.233,relheight=0.3, relwidth=0.3)
         self.Instruction.configure(background="#d9d9d9")
         self.Instruction.configure(borderwidth="2")
         self.Instruction.configure(highlightbackground="#d9d9d9")
@@ -532,20 +533,20 @@ class Toplevel1:
         self.Training.configure(text='''Train''')
 
         # the progress bar that indicates the progress of training
-        self.TProgressbar1 = ttk.Progressbar(self.Frame1)
-        self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
+        # self.TProgressbar1 = ttk.Progressbar(self.Frame1)
+        # self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
 
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
         self.vis_gen.configure(takefocus="")
-        self.vis_gen.configure(command=lambda:self.visualization())
+        self.vis_gen.configure(command=lambda:self.visualizations())
         self.vis_gen.configure(text='''Visualizations''')
 
-        self.Cluster_Inspector = ttk.Button(self.Frame1)
-        self.Cluster_Inspector.place(relx=0.651, rely=0.882, height=35, width=163)
-        self.Cluster_Inspector.configure(takefocus="")
+        # self.Cluster_Inspector = ttk.Button(self.Frame1)
+        # self.Cluster_Inspector.place(relx=0.651, rely=0.882, height=35, width=163)
+        # self.Cluster_Inspector.configure(takefocus="")
         # self.Cluster_Inspector.configure(command=self.cluster_inspector())
-        self.Cluster_Inspector.configure(text='''Cluster Inspector''')
+        # self.Cluster_Inspector.configure(text='''Cluster Inspector''')
 
         # lattice label
         self.Lattice = tk.Label(self.Frame1)
@@ -677,42 +678,32 @@ class Toplevel1:
         self.Cluster_ent.configure(selectbackground="#c4c4c4")
         self.Cluster_ent.configure(selectforeground="black")
 
+        # lbox select colorcategory
+        self.lbox = tk.Listbox(self.Frame1)
+        self.lbox.place(relx=0.563, rely=0.588, relheight=0.2, relwidth=0.2)
+        self.lbox.configure(background="white")
+        self.lbox.configure(disabledforeground="#a3a3a3")
+        self.lbox.configure(font="TkFixedFont")
+        self.lbox.configure(foreground="#000000")
 
+        self.yscroll = ttk.Scrollbar(command=self.lbox.yview, orient=tk.VERTICAL)
+        self.yscroll.grid(row=0, column=1, sticky=tk.N+tk.S)
+        self.lbox.configure(yscrollcommand=self.yscroll.set)
+        
 
-    # embedded functions are here #
-    # ask to open csv file (csv file) with index of the first column
-    def print_var(self):
-        print(type(self.n_job_ent.get()))
-        print(type(self.Lattice_ent.get()))
-        print(type(self.shared_memory_ent.get()))
-        print((self.Mapsize_x.get(), self.Mapsize_y.get()))
-        print(type(self.train_len_factor_ent.get()))
-        print(self.Cluster_ent.get())
+    def lbox_print(self):
+        cnames = ["hacing fun", "play", "comeon","saaaaaap"]
+        try:    
+            for name in cnames:
+                self.lbox.insert(tk.END,name)
 
-    def open_csvfile(self):
-        """
-        open and load csv data
-        """
-        file=askopenfilename(initialdir=dir_name, title="Select Data",
-                             filetypes=[("csv files", "*.csv")])
-        if file is not None:
-            content=open(file, "rb")
-            df=pd.read_csv(content)
-            ind=df[df.columns[0]]
-            df=df.set_index(ind)
-            print(df.values)
-            return df
+            index = self.lbox.curselection()[0]
+            seltext = self.lbox.get(index)
+            print(seltext)
 
-    # ask to open model file (general file)
-    def open_modelfile(self):
-        """
-        open and load som model file
-        """
-        file=askopenfilename(initialdir=dir_name, title="Select file", filetypes=[("All files", "*.*")])
-        if file is not None:
-            # print(content)
-            content = open(file, "rb")
-            return pickle.load(content)
+        except IndexError:
+            pass
+
 
     def sm_training(self):
         """
@@ -720,16 +711,20 @@ class Toplevel1:
         """
         file=askopenfilename(initialdir=dir_name, title="Select Data",
                              filetypes=[("csv files", "*.csv")])
+        
+        if file is None:
+            tk.messagebox.showerror("Error","your chosen file is not valid. \n Please choose again.")
+
         content=open(file, "rb")
         data=pd.read_csv(content)
-        ind=data[data.columns[0]]
+        # ind=data[data.columns[0]]
         
-        self.data = data.set_index(ind)
-        self.comp_names=[name for name in self.data.columns]
-        self.index = self.data.index
+        # data = data.set_index(ind)
+        comp_names=[name for name in data.columns]
+        index = data.index
 
         # test cali housing first
-        df=self.data.head(400).fillna(0).values
+        df=data.fillna(0).values
 
         # initialize the build
         sm=SOMFactory().build(
@@ -765,14 +760,14 @@ class Toplevel1:
         # if multiple runs are required
         # joblib.dump(sm, "model_{}.joblib".format(i))
 
-        pickle.dump(sm, open("sm_model", "wb"))
+        pickle.dump(sm, open("Models/sm_model", "wb"))
 
         # print errors on the cmd prompt
         print("the topographic error is %s " % topographic_error)
         print("the quantitization error is %s " % quantitization_error)
 
     # generate cluster map
-    def visualization(self):
+    def visualizations(self):
         """
         generate cluster map, component maps and umat map
         """
@@ -780,46 +775,54 @@ class Toplevel1:
         title="Cluster"
 
         file_d=askopenfilename(initialdir=dir_name, title="Select Data", filetypes=[("csv files", "*.csv")])
+        if file_d is None:
+            tk.messagebox.showerror("Error","your chosen file is not valid. \n Please choose again.")
+        
         content1=open(file_d, "rb")
         data=pd.read_csv(content1)
-        ind=data[data.columns[0]]
+        # ind=data[data.columns[0]]
         
-        self.data = data.set_index(ind)
-        self.comp_names=[name for name in self.data.columns]
+        # data = data.set_index(ind)
+        comp_names=[name for name in data.columns]
+
+        for name in data.columns:
+            self.lbox.insert(tk.END,name)
 
         file=askopenfilename(initialdir=dir_name, title="Select file", filetypes=[("All files", "*.*")])
+        if file is None:
+            tk.messagebox.showerror("Error","your chosen file is not valid. \n Please choose again.")
         content2 = open(file, "rb")
 
-        self.sm = pickle.load(content2)
-        self.labels = list(self.data.index)
-        self.n_clusters=int(self.Cluster_ent.get())
+        sm = pickle.load(content2)
+        labels = list(data.index)
+        n_clusters=int(self.Cluster_ent.get())
         
         cmap=plt.get_cmap("tab20")
         n_palette=20  # number of different colors in this color palette
-        color_list=[cmap((i % n_palette)/n_palette) for i in range(self.n_clusters)]
-        msz = self.sm.codebook.mapsize
-        proj=self.sm.project_data(self.sm.data_raw)
-        coord=self.sm.bmu_ind_to_xy(proj)
+        color_list=[cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
+        msz = sm.codebook.mapsize
+        proj=sm.project_data(sm.data_raw)
+        coord=sm.bmu_ind_to_xy(proj)
 
         fig, ax=plt.subplots(1, 1, figsize=(40, 40))
 
         # cl_labels = som.cluster(n_clusters)
-        self.cl_labels=sklearn.cluster.KMeans(
-            n_clusters=self.n_clusters, random_state=555).fit_predict(self.sm.codebook.matrix)
+        cl_labels=sklearn.cluster.KMeans(
+            n_clusters=n_clusters, random_state=555).fit_predict(sm.codebook.matrix)
 
         # fill each rectangular unit area with cluster color
         # and draw line segment to the border of cluster
         norm=mpl.colors.Normalize(vmin=0, vmax=n_palette, clip=True)
 
         # borders
-        ax.pcolormesh(self.cl_labels.reshape(msz[0], msz[1]).T % n_palette,
+        ax.pcolormesh(cl_labels.reshape(msz[0], msz[1]).T % n_palette,
                       cmap=cmap, norm=norm, edgecolors='face',
                       lw=0.5, alpha=0.5)
 
         ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
         ax.axis('off')
 
-        for self.label, x, y in zip(self.labels, coord[:, 0], coord[:, 1]):
+        for label, x, y in zip(labels, coord[:, 0], coord[:, 1]):
             x += 0.2
             y += 0.2
             # "+ 0.1" means shift of label location to upperright direction
@@ -841,38 +844,61 @@ class Toplevel1:
         plt.savefig("Images/Cluster.png")
 
         # umat map
-        self.n_clusters=int(self.Cluster_ent.get())
+        # n_clusters=int(self.Cluster_ent.get())
         umatrixTFP = tfprop_vis.UMatrixTFP(0, 0, '', text_size=14)
         cmap = plt.get_cmap('RdYlBu_r')  # set color map
-        umat = umatrixTFP.show(self.sm, pd.DataFrame(self.labels),pd.DataFrame(self.labels), "Images/umat.png",show_data=True, labels=False, contooor=True,cmap=cmap,blob = False)
+        umat = umatrixTFP.show(sm, pd.DataFrame(labels),pd.DataFrame(labels), "Images/umat.png",show_data=True, labels=False, contooor=True,cmap=cmap,blob = False)
 
         # component maps
         htmap_x, htmap_y = (10, 10)
         viewTFP = tfprop_vis.ViewTFP(htmap_x, htmap_y, '',text_size=10)
 
-        self.cl_labels = sklearn.cluster.KMeans(n_clusters = self.n_clusters, random_state = 555).fit_predict(self.sm.codebook.matrix)
+        cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, random_state = 555).fit_predict(sm.codebook.matrix)
 
-        for i in range(0,len(self.data.columns)):
-            comp_map = viewTFP.show(self.sm, self.cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
-                which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
+        # for i in range(0,len(data.columns)):
+        #     comp_map = viewTFP.show(sm, cl_labels, "Images/heatmap" + str(i) + ".png", col_sz=1,
+        #         which_dim=i, desnormalize=True, col_norm='median',cmap=cmap)
 
-   
-    def clusteringmap_category(self):
+        cmap = plt.get_cmap('RdYlBu_r')  # set color map
+        comp_map = viewTFP.show(sm, cl_labels, "Images/heatmap.png", col_sz=3,
+                    which_dim='all', desnormalize=True, col_norm='median',cmap=cmap)
+
+    # def cluster_inspector(self):
+        # This makes all the loggers stay quiet unless it's important
+        logging.getLogger().setLevel(logging.WARNING)
+
+        cl_labels2 = ci.kmeans_clust(sm, n_clusters)
+        clusters_list = ci.sort_materials_by_cluster(sm,data,cl_labels2)
+
+        # # This makes it so it will display the full lists
+        # pd.set_option('display.max_rows', 2000)
+        # pd.set_option('display.width', 1000)
+        # pd.set_option("display.max_columns",50)
+
+        # # This should be the last statement of the cell, to make it display
+        # # That, or assign the return value to a variable, and have that variable be the final expression in a cell
+        # ci.cluster_tabs(sm, data, clusters_list, cl_labels2)
         
-        savepath = "Images/"
-        dataset = self.data
-        labels = self.data.index
-        n_clusters = self.n_clusters
-        colorcategory = "?" # needs to be one thing in the dataset, it can be outside of data
+        # save the content of each cluster to csv file
+        for i in range(n_clusters):
+            ind = clusters_list[i]
+            data.iloc[ind].to_csv("Data/cluster_ %s" % i + ".csv")
 
-        categories = self.data[colorcategory] #if colorcategory is one col of the dataset
+        # Projection Map Method starts here, I combine it in the vis function
+
+        index = self.lbox.curselection()[0] # needs to be one thing in the dataset, it can be outside of data
+        colorcategory = self.lbox.get(index)
+
+        # if len(colorcategory) > 1:
+        #     tk.messagebox.showerror("Error", "Choose only one to generate the projection map.")
+
+        categories = data[colorcategory] #if colorcategory is one col of the dataset
         cmap = plt.get_cmap("tab20") #cmap for background
         n_palette = 20  # number of different colors in this color palette
         color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
-        msz = self.sm.codebook.mapsize
-        proj = self.sm.project_data(self.sm.data_raw)
-        coord = self.sm.bmu_ind_to_xy(proj)
-        cl_labels = self.cl_labels
+        msz = sm.codebook.mapsize
+        proj = sm.project_data(sm.data_raw)
+        coord = sm.bmu_ind_to_xy(proj)
 
         fig, ax = plt.subplots(1, 1, figsize=(30,30))
 
@@ -886,7 +912,7 @@ class Toplevel1:
         ax.scatter(coord[:, 0]+0.5, coord[:, 1]+0.5, c='k', marker='o')
         ax.axis('off')
 
-        categoryname = list(dataset.groupby(colorcategory).count().index)
+        categoryname = list(data.groupby(colorcategory).count().index)
         categories_int = categories.apply(categoryname.index)
 
         N = len(categoryname)
@@ -927,7 +953,7 @@ class Toplevel1:
                     #  rotation=30, fontsize=12, weight='semibold')
             #cl_labels = som.cluster(n_clusters)
         cl_labels = sklearn.cluster.KMeans(n_clusters = n_clusters, 
-                                        random_state = 555).fit_predict(self.sm.codebook.matrix)
+                                        random_state = 555).fit_predict(sm.codebook.matrix)
 
         for i in range(len(cl_labels)):
             rect_x = [i // msz[1], i // msz[1],
@@ -944,27 +970,10 @@ class Toplevel1:
                 if cl_labels[i] != cl_labels[i+msz[1]]:
                     ax.plot([rect_x[2], rect_x[3]],
                             [rect_y[2], rect_y[3]], 'k-', lw=2.5)
-        
-        plt.savefig(savepath)
+
+        plt.savefig("Images/Projection" + colorcategory + ".png")
         plt.title(colorcategory,fontsize = 50)
         return cl_labels
-
-
-    # def cluster_inspector(self):
-    #     # This makes all the loggers stay quiet unless it's important
-    #     logging.getLogger().setLevel(logging.WARNING)
-
-    #     cl_labels = ci.kmeans_clust(sm, 5)
-    #     clusters_list = ci.sort_materials_by_cluster(sm,X_train_cluster,cl_labels)
-
-    #     # # This makes it so it will display the full lists
-    #     pd.set_option('display.max_rows', 2000)
-    #     pd.set_option('display.width', 1000)
-    #     pd.set_option("display.max_columns",50)
-
-    #     # # This should be the last statement of the cell, to make it display
-    #     # # That, or assign the return value to a variable, and have that variable be the final expression in a cell
-    #     ci.cluster_tabs(sm, X_train_cluster, clusters_list, cl_labels)
 
 if __name__ == '__main__':
     vp_start_gui()
