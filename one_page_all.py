@@ -537,7 +537,7 @@ class Toplevel1:
         # self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
 
         self.vis_gen = ttk.Button(self.Frame1)
-        self.vis_gen.place(relx=0.563, rely=0.882, height=35, width=120)
+        self.vis_gen.place(relx=0.563, rely=0.811, height=35, width=120)
         self.vis_gen.configure(takefocus="")
         self.vis_gen.configure(command=lambda:self.visualizations())
         self.vis_gen.configure(text='''Visualizations''')
@@ -686,9 +686,9 @@ class Toplevel1:
         self.lbox.configure(font="TkFixedFont")
         self.lbox.configure(foreground="#000000")
 
-        self.yscroll = ttk.Scrollbar(command=self.lbox.yview, orient=tk.VERTICAL)
-        self.yscroll.grid(row=0, column=1, sticky=tk.N+tk.S)
-        self.lbox.configure(yscrollcommand=self.yscroll.set)
+        # self.yscroll = ttk.Scrollbar(command=self.lbox.yview, orient=tk.VERTICAL)
+        # self.yscroll.grid(row=5, column=4)
+        # self.lbox.configure(yscrollcommand=self.yscroll.set)
         
 
     def lbox_print(self):
