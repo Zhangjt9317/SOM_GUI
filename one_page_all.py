@@ -692,8 +692,8 @@ class Toplevel1:
         
 
     def lbox_print(self):
-        cnames = ["hacing fun", "play", "comeon","saaaaaap"]
-        try:    
+        cnames = ["1", "2", "3","4"]
+        try:
             for name in cnames:
                 self.lbox.insert(tk.END,name)
 
@@ -880,7 +880,7 @@ class Toplevel1:
         # ci.cluster_tabs(sm, data, clusters_list, cl_labels2)
         
         # save the content of each cluster to csv file
-        for i in range(n_clusters):
+        for i in range(1, n_clusters+1):
             ind = clusters_list[i]
             data.iloc[ind].to_csv("Data/cluster_ %s" % i + ".csv")
 
@@ -889,8 +889,11 @@ class Toplevel1:
         index = self.lbox.curselection()[0] # needs to be one thing in the dataset, it can be outside of data
         colorcategory = self.lbox.get(index)
 
-        # if len(colorcategory) > 1:
-        #     tk.messagebox.showerror("Error", "Choose only one to generate the projection map.")
+        Min = np.min(data[colorcategory])
+        Max = np.max(data[colorcategory])
+
+        # rescaling numerical data
+        
 
         categories = data[colorcategory] #if colorcategory is one col of the dataset
         cmap = plt.get_cmap("tab20") #cmap for background
