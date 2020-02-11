@@ -870,7 +870,7 @@ class Toplevel1:
         # save the content of each cluster to csv file
         for i in range(0, n_clusters):
             ind = clusters_list[i]
-            data.iloc[ind].to_csv("Data/cluster_ %s" % i + ".csv")
+            data.iloc[ind].to_csv("Data/cluster_ %s" % (i+1) + ".csv")
 
         # Projection Map Method starts here, I combine it in the vis function
 
