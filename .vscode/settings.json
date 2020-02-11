@@ -1,5 +1,5 @@
 {
     "python.formatting.provider": "autopep8",
-    "python.pythonPath": "C:\\Users\\jtz93\\Anaconda3\\python.exe",
+    "python.pythonPath": "C:\\Users\\jtz93\\Anaconda3\\envs\\SOMenv\\python.exe",
     "git.ignoreLimitWarning": true
 }

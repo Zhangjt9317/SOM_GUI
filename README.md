@@ -73,3 +73,8 @@ All functions work normally, I need to tune the functions for job sequence. But 
 3. click "visualizations" to select both dataset and trained model to generate component list in the listbox and visualization maps.
 4. In this case we have to generate all the way to heatmaps and close the pop up window to select component property user wants to project on the cluster map. (It is stupid, I know)
 5. generate the projection map --> min-max scaling is required for numerical values in a certain range, categorical values can be used directly.
+
+
+### Heads Up
+
+1. Do not install scipy, it has a conflict with existing SOMPY package.

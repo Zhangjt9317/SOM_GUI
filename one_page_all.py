@@ -45,6 +45,7 @@ import os
 
 import sklearn
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn.preprocessing import MinMaxScaler
 from sklearn import cluster
 # from sklearn.externals import joblib
 import joblib
@@ -532,21 +533,11 @@ class Toplevel1:
         self.Training.configure(command=lambda:self.sm_training())
         self.Training.configure(text='''Train''')
 
-        # the progress bar that indicates the progress of training
-        # self.TProgressbar1 = ttk.Progressbar(self.Frame1)
-        # self.TProgressbar1.place(relx=0.313, rely=0.892, relwidth=0.234, relheight=0.0, height=22)
-
         self.vis_gen = ttk.Button(self.Frame1)
         self.vis_gen.place(relx=0.563, rely=0.811, height=35, width=120)
         self.vis_gen.configure(takefocus="")
         self.vis_gen.configure(command=lambda:self.visualizations())
         self.vis_gen.configure(text='''Visualizations''')
-
-        # self.Cluster_Inspector = ttk.Button(self.Frame1)
-        # self.Cluster_Inspector.place(relx=0.651, rely=0.882, height=35, width=163)
-        # self.Cluster_Inspector.configure(takefocus="")
-        # self.Cluster_Inspector.configure(command=self.cluster_inspector())
-        # self.Cluster_Inspector.configure(text='''Cluster Inspector''')
 
         # lattice label
         self.Lattice = tk.Label(self.Frame1)
@@ -686,24 +677,21 @@ class Toplevel1:
         self.lbox.configure(font="TkFixedFont")
         self.lbox.configure(foreground="#000000")
 
-        # self.yscroll = ttk.Scrollbar(command=self.lbox.yview, orient=tk.VERTICAL)
-        # self.yscroll.grid(row=5, column=4)
-        # self.lbox.configure(yscrollcommand=self.yscroll.set)
-        
+    def scaler(self,X,k):
+        """
+        This function is to append the normalized PCE_ave data to a 
+        new column, prop is the property name string, k is number of 
+        group
+        """
+        for i in range(len(X)):
+            # X_std
+            X_std = (X - X.min(axis=0))/(X.max(axis=0) - X.min(axis=0))
+            # 0 -1 minmax 
+            X_scaled = X_std * (X.max(axis=0) - X.min(axis=0)) + X.min(axis=0)
 
-    def lbox_print(self):
-        cnames = ["1", "2", "3","4"]
-        try:
-            for name in cnames:
-                self.lbox.insert(tk.END,name)
-
-            index = self.lbox.curselection()[0]
-            seltext = self.lbox.get(index)
-            print(seltext)
-
-        except IndexError:
-            pass
-
+            X2 = np.round(X_scaled * k)
+            X_new = np.where(X2==0, 1, X2) 
+        return X_new
 
     def sm_training(self):
         """
@@ -880,7 +868,7 @@ class Toplevel1:
         # ci.cluster_tabs(sm, data, clusters_list, cl_labels2)
         
         # save the content of each cluster to csv file
-        for i in range(1, n_clusters+1):
+        for i in range(0, n_clusters):
             ind = clusters_list[i]
             data.iloc[ind].to_csv("Data/cluster_ %s" % i + ".csv")
 
@@ -892,10 +880,12 @@ class Toplevel1:
         Min = np.min(data[colorcategory])
         Max = np.max(data[colorcategory])
 
-        # rescaling numerical data
+        # clusteringmap_category(sm,4,data,"naRingbyChain_Categ",'./Images/descriptors/Mw_HOMO/naRingbyChain_Categ.png')
         
+        X = data[colorcategory]
+        k = 5 # pre-defined to 5 groups, we can change it by putting an entry box
 
-        categories = data[colorcategory] #if colorcategory is one col of the dataset
+        categories = data[colorcategory] #if colorcategory is one col of the dataset, minmax-scaled categorical values
         cmap = plt.get_cmap("tab20") #cmap for background
         n_palette = 20  # number of different colors in this color palette
         color_list = [cmap((i % n_palette)/n_palette) for i in range(n_clusters)]
@@ -974,7 +964,7 @@ class Toplevel1:
                     ax.plot([rect_x[2], rect_x[3]],
                             [rect_y[2], rect_y[3]], 'k-', lw=2.5)
 
-        plt.savefig("Images/Projection" + colorcategory + ".png")
+        plt.savefig("Images/Projection_" + colorcategory + ".png")
         plt.title(colorcategory,fontsize = 50)
         return cl_labels
 
